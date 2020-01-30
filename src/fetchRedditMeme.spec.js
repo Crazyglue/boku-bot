@@ -9,8 +9,9 @@ describe('fetchRedditMeme', () => {
     beforeAll(() => {
         axios.get.mockResolvedValue(mockResponseData);
     });
+
     it('fetches memes', async () => {
         const result = await fetchRedditMeme('boomer');
-        expect(result).toEqual(expect.any(String));
+        expect(result).toEqual({ text: expect.any(String), imageUrl: expect.any(String) });
     });
 });
