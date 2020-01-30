@@ -3,7 +3,7 @@ jest.mock('axios', () => ({ get: jest.fn() }));
 const axios = require('axios');
 const fetchRedditMeme = require('./fetchRedditMeme');
 
-const mockResponseData = require('../test-data/reddit/sampleSearch.json');
+const mockResponseData = require('../test-data/reddit/sampleAxiosSearchResponse.json');
 
 describe('fetchRedditMeme', () => {
     beforeAll(() => {

@@ -5,27 +5,26 @@ function fetchMemes(searchString = '') {
 
     return axios.get(searchUrl);
 }
-
+/* eslint-disable no-console */
 const imageExtensionRegex = /\.(png|jpg|jpeg|gif)/;
 
-function filterNonImages({ data: { children = [] } }) {
-    console.log('TCL: filterNonImages -> children', children);
-    return children
-        .filter((post) => imageExtensionRegex.test(post.data.url))
-        .map((post) => `${post.data.title}
+function images(post) {
+    return imageExtensionRegex.test(post.data.url);
+}
 
-        ${post.data.url}`);
+function formatPostsIntoMessage(post) {
+    return `${post.data.title}
+
+    ${post.data.url}`;
 }
 
 module.exports = async function fetchRedditMeme(searchString = '') {
-    console.log('TCL: fetchRedditMeme -> searchString', searchString);
-    const response = await fetchMemes(searchString);
-    console.log('TCL: fetchRedditMeme -> response', response.data);
+    const { data: { data: { children: posts = [] } } } = await fetchMemes(searchString);
 
-    const imagePosts = filterNonImages(response.data);
-    console.log('TCL: fetchRedditMeme -> imagePosts', imagePosts);
+    const imagePosts = posts.filter(images).map(formatPostsIntoMessage);
+
     const randomIndex = Math.floor(imagePosts.length * Math.random());
     const randomImage = imagePosts[randomIndex];
-    const postTitle =
+    console.log('TCL: fetchRedditMeme -> randomImage', randomImage);
     return randomImage;
 };
