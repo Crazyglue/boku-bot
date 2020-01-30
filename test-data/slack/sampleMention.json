@@ -1,0 +1,41 @@
+{
+    "token": "FNps9meapWrTwiq7ekWDz8Ni",
+    "team_id": "TCD1KRJS1",
+    "api_app_id": "AT8TZAEG6",
+    "event": {
+        "client_msg_id": "1f2e8019-25b5-4535-8b0a-115eab9c33cc",
+        "type": "app_mention",
+        "text": "<@UT8HQLEF9> your time to shine is now meme",
+        "user": "UMEDDAJVD",
+        "ts": "1580345715.001000",
+        "team": "TCD1KRJS1",
+        "blocks": [
+            {
+                "type": "rich_text",
+                "block_id": "fuuy=",
+                "elements": [
+                    {
+                        "type": "rich_text_section",
+                        "elements": [
+                            {
+                                "type": "user",
+                                "user_id": "UT8HQLEF9"
+                            },
+                            {
+                                "type": "text",
+                                "text": " your time to shine is now"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "event_ts": "1580345715.001000"
+    },
+    "type": "event_callback",
+    "event_id": "EvTC63LPL7",
+    "event_time": 1580345715,
+    "authed_users": [
+        "UT8HQLEF9"
+    ]
+}
