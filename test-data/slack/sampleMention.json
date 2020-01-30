@@ -30,6 +30,7 @@
                 ]
             }
         ],
+        "channel": "CP31WCYV7",
         "event_ts": "1580345715.001000"
     },
     "type": "event_callback",
