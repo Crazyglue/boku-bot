@@ -1,0 +1,26 @@
+{
+  "name": "boku-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "zip -r function.zip .",
+    "deploy": "npm run build && npm run push",
+    "push": "/usr/local/bin/aws2 lambda update-function-code --function-name BokuLambda --zip-file fileb://function.zip --region us-west-2",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "https": "^1.0.0",
+    "querystring": "^0.2.0"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.610.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0"
+  }
+}
