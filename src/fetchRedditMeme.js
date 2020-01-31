@@ -23,6 +23,7 @@ module.exports = async function fetchRedditMeme(searchString = '') {
 
     const randomIndex = Math.floor(imagePosts.length * Math.random());
     const randomPost = imagePosts[randomIndex];
-    console.log('TCL: fetchRedditMeme -> randomImage', { text: randomPost.data.title, imageUrl: randomPost.data.url });
-    return { text: randomPost.data.title, imageUrl: randomPost.data.url };
+    const postTitle = randomPost ? randomPost.data.title : '';
+    const postUrl = randomPost ? randomPost.data.url : '';
+    return { text: postTitle, imageUrl: postUrl };
 };

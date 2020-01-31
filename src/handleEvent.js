@@ -1,4 +1,4 @@
-const https = require('https');
+const axios = require('axios');
 const qs = require('qs');
 const { DEFAULT_200_RESPONSE } = require('./constants');
 const fetchRedditMeme = require('./fetchRedditMeme');
@@ -9,7 +9,6 @@ const curseRegex = /(fuck|ass|bitch|shit|dick|bastard)/;
 // Post message to Slack - https://api.slack.com/methods/chat.postMessage
 module.exports = async function handleEvent({ event, authed_users = [] }, callback) {
     const message = {
-        token: SLACK_ACCESS_TOKEN,
         channel: event.channel,
     };
 
@@ -22,17 +21,33 @@ module.exports = async function handleEvent({ event, authed_users = [] }, callba
         const sanitizedMessage = removedUsers.replace('meme', '').trim();
         const { text: title, imageUrl } = await fetchRedditMeme(sanitizedMessage);
         if (!title || !imageUrl) {
+            console.log('TCL: handleEvent -> title || !imageUrl', title || !imageUrl);
             message.text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`;
+        } else {
+            message.text = 'Heres a :partydank: meme';
+            message.attachments = [
+                { title, image_url: imageUrl },
+            ];
         }
-        message.text = `:party_dank: ${title} :party_dank: \n${imageUrl}`;
     } else if (curseRegex.test(event.text)) {
         message.text = `<@${event.user}> thats very rude, why would you say that?`;
     }
 
-    const query = qs.stringify(message); // prepare the querystring
+    console.log('TCL: handleEvent -> message', message);
+
+    // const query = qs.stringify(message); // prepare the querystring
+    console.log('TCL: handleEvent -> event.channel', event.channel);
 
     if (event.channel) {
-        https.get(`https://slack.com/api/chat.postMessage?${query}`);
+        axios({
+            url: 'https://slack.com/api/chat.postMessage',
+            method: 'post',
+            headers: {
+                Authorization: `Bearer ${SLACK_ACCESS_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+            data: JSON.stringify(message),
+        });
     }
 
     callback(null, DEFAULT_200_RESPONSE);
