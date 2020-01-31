@@ -20,6 +20,10 @@ Resources:
                     Properties:
                         Path: /
                         Method: any
+            Environment:
+                Variables:
+                    SLACK_ACCESS_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_ACCESS_TOKEN:1}}'
+                    SLACK_VERIFICATION_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_VERIFICATION_TOKEN:1}}'
 
     BokuBotDepLayer:
         Type: AWS::Serverless::LayerVersion
