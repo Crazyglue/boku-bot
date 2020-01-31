@@ -5,8 +5,7 @@ const createMeme = require('./createMeme');
 
 const { SLACK_ACCESS_TOKEN } = process.env;
 const curseRegex = /(fuck|ass|bitch|shit|dick|bastard)/;
-const createMemeRegex = /^.+(!create)/g;
-const isCreateMeme = (eventText = '') => createMemeRegex.test(eventText);
+const isCreateMeme = (eventText = '') => eventText.includes('!create');
 /* eslint-disable no-console */
 // Post message to Slack - https://api.slack.com/methods/chat.postMessage
 module.exports = async function handleEvent({ event, authed_users = [] }, callback) {
