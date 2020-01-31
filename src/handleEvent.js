@@ -21,39 +21,13 @@ module.exports = async function handleEvent({ event, authed_users = [] }, callba
         const removedUsers = authed_users.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
         const sanitizedMessage = removedUsers.replace('meme', '').trim();
         const { text: title, imageUrl } = await fetchRedditMeme(sanitizedMessage);
-        message.text = `${title}\n${imageUrl}`;
-        // TODO:
-        // message.attachments = [
-        //     {
-        //         text: '',
-        //         image_url: imageUrl,
-        //     },
-        //     {
-        //         text: '',
-        //         color: '#3AA3E3',
-        //         attachment_type: 'default',
-        //         actions: [
-        //             {
-        //                 name: 'game',
-        //                 text: ':partydank:',
-        //                 type: 'button',
-        //                 value: 'dank',
-        //             },
-        //             {
-        //                 name: 'game',
-        //                 text: ':wat:',
-        //                 type: 'button',
-        //                 value: 'not_dank',
-        //             },
-        //         ],
-        //     },
-        // ];
+        if (!title || !imageUrl) {
+            message.text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`
+        }
+        message.text = `:party_dank:${title}:party_dank:\n${imageUrl}`;
     } else if (curseRegex.test(event.text)) {
         message.text = `<@${event.user}> thats very rude, why would you say that?`;
     }
-
-    console.log('TCL: handleEvent -> event.channel', event.channel);
-    console.log('TCL: handleEvent -> text', message.text);
 
     const query = qs.stringify(message); // prepare the querystring
 
