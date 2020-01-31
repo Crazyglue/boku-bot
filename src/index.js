@@ -1,7 +1,7 @@
 require('dotenv').config();
 
-const slackVerification = require('./src/slackVerification');
-const handleEvent = require('./src/handleEvent');
+const slackVerification = require('./slackVerification');
+const handleEvent = require('./handleEvent');
 
 const eventToHandler = {
     url_verification: slackVerification,
@@ -10,6 +10,7 @@ const eventToHandler = {
 
 // Lambda handler
 exports.handler = (data, context, callback) => {
+    console.log('TCL: exports.handler -> data', data)
     const parsedData = JSON.parse(data.body);
     const handleFn = eventToHandler[parsedData.type];
 

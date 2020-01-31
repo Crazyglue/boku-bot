@@ -2,10 +2,10 @@
   "name": "boku-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "build": "zip -r function.zip . -x '*.git*'",
-    "deploy": "rm function.zip && npm run build && npm run push:s3 && npm run update:lambda",
+    "build": "sam package --template-file template.yaml --s3-bucket boku-bot-builds --output-template-file out.yaml    ",
+    "deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region us-west-2 ",
     "update:lambda": "/usr/local/bin/aws2 lambda update-function-code --function-name BokuLambda --region us-west-2 --s3-bucket boku-bot-builds --s3-key function.zip",
     "push": "/usr/local/bin/aws2 lambda update-function-code --function-name BokuLambda --zip-file fileb://function.zip --region us-west-2",
     "push:s3": "/usr/local/bin/aws2 s3 cp function.zip s3://boku-bot-builds",
