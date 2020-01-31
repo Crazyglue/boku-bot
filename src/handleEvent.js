@@ -1,10 +1,12 @@
 const axios = require('axios');
-const qs = require('qs');
 const { DEFAULT_200_RESPONSE } = require('./constants');
 const fetchRedditMeme = require('./fetchRedditMeme');
+const createMeme = require('./createMeme');
 
 const { SLACK_ACCESS_TOKEN } = process.env;
 const curseRegex = /(fuck|ass|bitch|shit|dick|bastard)/;
+const createMemeRegex = /^.+(!create)/g;
+const isCreateMeme = (eventText = '') => createMemeRegex.test(eventText);
 /* eslint-disable no-console */
 // Post message to Slack - https://api.slack.com/methods/chat.postMessage
 module.exports = async function handleEvent({ event, authed_users = [] }, callback) {
@@ -16,7 +18,18 @@ module.exports = async function handleEvent({ event, authed_users = [] }, callba
     message.text = `<@${event.user}> I AM ALIIIIIIIIIVE`;
 
     console.log('TCL: handleEvent -> event.text', event.text);
-    if (event.text.includes('meme')) {
+    if (isCreateMeme(event.text)) {
+        const createdMeme = await createMeme(event.text);
+        console.log('TCL: handleEvent -> createdMeme', createdMeme);
+        if (!createdMeme) {
+            message.text = ':ohno: Something went wrong :ohno:';
+        } else {
+            message.text = 'Heres your custom :partydank: meme';
+            message.attachments = [
+                { title: '', image_url: createdMeme },
+            ];
+        }
+    } else if (event.text.includes('meme')) {
         const removedUsers = authed_users.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
         const sanitizedMessage = removedUsers.replace('meme', '').trim();
         const { text: title, imageUrl } = await fetchRedditMeme(sanitizedMessage);
