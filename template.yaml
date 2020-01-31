@@ -5,27 +5,34 @@ Globals:
     Function:
         Timeout: 3
         Runtime: nodejs12.x
-
+Parameters:
+    pSomeSecret:
+        Description: 'This is a parameter you pass when building the thing'
+        Type: 'String'
+        MinLength: 10
+        AllowedPattern: '[a-zA-z0-9]+'
 Resources:
-    BokuLambda:
+    rBokuLambda:
         Type: AWS::Serverless::Function
         Properties:
             CodeUri: src/
             Handler: index.handler
             Layers:
-              - !Ref BokuBotDepLayer
+              - !Ref rBokuBotDepLayer
             Events:
                 BokuAPI:
                     Type: Api
                     Properties:
                         Path: /
                         Method: any
-
-    BokuBotDepLayer:
+            Environment:
+                Variables:
+                    MY_SECRETE: !Ref pSomeSecret
+    rBokuBotDepLayer:
         Type: AWS::Serverless::LayerVersion
         Properties:
-            LayerName: boku-bot-dependencies
-            Description: Dependencies for boku bot
+            LayerName: 'boku-bot-dependencies'
+            Description: 'Dependencies for boku bot'
             ContentUri: dependencies/
             CompatibleRuntimes:
               - nodejs12.x
