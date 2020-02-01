@@ -1,66 +1,56 @@
-const axios = require('axios');
 const { DEFAULT_200_RESPONSE } = require('./constants');
 const fetchRedditMeme = require('./fetchRedditMeme');
 const createMeme = require('./createMeme');
+const sendSlackMessage = require('./sendSlackMessage');
+const generateHelpResponse = require('./generateHelpResponse');
 
-const { SLACK_ACCESS_TOKEN } = process.env;
 const curseRegex = /(fuck|ass|bitch|shit|dick|bastard)/;
 const isCreateMeme = (eventText = '') => eventText.includes('!create');
+const isFetchMeme = (eventText = '') => eventText.toLowerCase().includes('meme');
+const isHelp = (eventText = '') => eventText.includes('!help');
 /* eslint-disable no-console */
 // Post message to Slack - https://api.slack.com/methods/chat.postMessage
 module.exports = async function handleEvent({ event, authed_users = [] }, callback) {
-    const message = {
-        channel: event.channel,
-    };
-
-    // test default message
-    message.text = `<@${event.user}> I AM ALIIIIIIIIIVE`;
+    const { channel } = event;
 
     console.log('TCL: handleEvent -> event.text', event.text);
     if (isCreateMeme(event.text)) {
         const createdMeme = await createMeme(event.text);
         console.log('TCL: handleEvent -> createdMeme', createdMeme);
         if (!createdMeme) {
-            message.text = ':ohno: Something went wrong :ohno:';
+            const text = ':ohno: Something went wrong :ohno:';
+            sendSlackMessage({ text }, channel);
         } else {
-            message.text = 'Heres your custom :partydank: meme';
-            message.attachments = [
+            const text = 'Heres your custom :partydank: meme';
+            const attachments = [
                 { title: '', image_url: createdMeme },
             ];
+            sendSlackMessage({ text, attachments }, channel);
         }
-    } else if (event.text.includes('meme')) {
+    } else if (isFetchMeme(event.text)) {
         const removedUsers = authed_users.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
         const sanitizedMessage = removedUsers.replace('meme', '').trim();
         const { text: title, imageUrl } = await fetchRedditMeme(sanitizedMessage);
         if (!title || !imageUrl) {
             console.log('TCL: handleEvent -> title || !imageUrl', title || !imageUrl);
-            message.text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`;
+            const text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`;
+            sendSlackMessage({ text }, event);
         } else {
-            message.text = 'Heres a :partydank: meme';
-            message.attachments = [
+            const text = 'Heres a :partydank: meme';
+            const attachments = [
                 { title, image_url: imageUrl },
             ];
+            sendSlackMessage({ text, attachments }, channel);
         }
     } else if (curseRegex.test(event.text)) {
-        message.text = `<@${event.user}> thats very rude, why would you say that?`;
+        const text = `<@${event.user}> thats very rude, why would you say that?`;
+        sendSlackMessage({ text }, channel);
+    } else {
+        // default message
+        const text = `<@${event.user}> I AM ALIIIIIIIIIVE`;
+        sendSlackMessage({ text }, channel);
     }
 
-    console.log('TCL: handleEvent -> message', message);
-
-    // const query = qs.stringify(message); // prepare the querystring
-    console.log('TCL: handleEvent -> event.channel', event.channel);
-
-    if (event.channel) {
-        axios({
-            url: 'https://slack.com/api/chat.postMessage',
-            method: 'post',
-            headers: {
-                Authorization: `Bearer ${SLACK_ACCESS_TOKEN}`,
-                'Content-Type': 'application/json',
-            },
-            data: JSON.stringify(message),
-        });
-    }
-
+    // response to slack acknowledging the event was received
     callback(null, DEFAULT_200_RESPONSE);
 };

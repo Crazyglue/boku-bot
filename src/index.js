@@ -10,7 +10,8 @@ const eventToHandler = {
 
 // Lambda handler
 exports.handler = (data, context, callback) => {
-    console.log('TCL: exports.handler -> data', data)
+    // console.log('TCL: exports.handler -> data', data);
+    console.log('TCL: exports.handler -> data', data.body);
     const parsedData = JSON.parse(data.body);
     const handleFn = eventToHandler[parsedData.type];
 
