@@ -27,6 +27,9 @@ module.exports = async function handleEvent({ event, authed_users = [] }, callba
             ];
             sendSlackMessage({ text, attachments }, channel);
         }
+    } else if (isHelp(event.text)) {
+        const helpResponse = generateHelpResponse(event);
+        sendSlackMessage(helpResponse, channel);
     } else if (isFetchMeme(event.text)) {
         const removedUsers = authed_users.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
         const sanitizedMessage = removedUsers.replace('meme', '').trim();
