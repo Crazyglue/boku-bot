@@ -28,7 +28,7 @@ const messageTypeToHandler = [
 ];
 
 /* eslint-disable no-console */
-export default async function handleEvent({ event, authed_users = [] }: SlackAPI.SlackEventPayload, callback: Callback) {
+export default async function handleEvent({ event, authed_users = [] }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
     const { channel } = event;
 
     const eventHandler = messageTypeToHandler.reduce((handler, [checkFn, handlerFn]) => {

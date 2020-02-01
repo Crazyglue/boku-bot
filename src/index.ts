@@ -6,7 +6,11 @@ import slackVerification from './slackVerification';
 import handleEvent from './handleEvent'
 import { SlackAPI, SlackEventHandler } from '../types/slackTypes';
 
-const eventToHandler: {[key: string]: SlackEventHandler} = {
+interface EventHandlerMap {
+    [key: string]: SlackEventHandler;
+}
+
+const eventToHandler: EventHandlerMap = {
     url_verification: slackVerification,
     event_callback: handleEvent,
 };
@@ -14,7 +18,7 @@ const eventToHandler: {[key: string]: SlackEventHandler} = {
 /* eslint-disable no-console */
 // Lambda handler
 exports.handler = (data: APIGatewayProxyEvent, context: Context, callback: Callback) => {
-    const parsedData: SlackAPI.Event = JSON.parse(data.body);
+    const parsedData: SlackAPI.SlackEventPayload = JSON.parse(data.body);
     const handleFn = eventToHandler[parsedData.type];
 
     console.log('processing ', parsedData.type)

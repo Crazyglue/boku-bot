@@ -1,26 +1,27 @@
-const axios = require('axios');
+import axios from 'axios';
+import { SlackAPI } from '../types/slackTypes';
+import { Reddit } from '../types/redditTypes';
 
 function fetchMemes(searchString = '') {
     const searchUrl = `https://www.reddit.com/r/dankmemes/search.json?q=${searchString}&sort=top`;
 
-    return axios.get(searchUrl);
+    return axios.request<Reddit.RedditReponse>({
+        method: 'get',
+        url: searchUrl
+    }).then(res => res.data);
 }
 /* eslint-disable no-console */
 const imageExtensionRegex = /\.(png|jpg|jpeg|gif)/;
 
-function images(post) {
+function images(post: Reddit.RedditPost) {
     return imageExtensionRegex.test(post.data.url);
 }
 
-// function formatPostsIntoMessage(post) {
-//     return `${post.data.title}\n${post.data.url}`;
-// }
-
-module.exports = async function fetchRedditMeme(event = {}, authedUsers = []) {
+export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
     const removedUsers = authedUsers.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
     const sanitizedMessage = removedUsers.replace('meme', '').trim();
 
-    const { data: { data: { children: posts = [] } } } = await fetchMemes(sanitizedMessage);
+    const { data: { children: posts = [] } } = await fetchMemes(sanitizedMessage);
 
     const imagePosts = posts.filter(images);
 

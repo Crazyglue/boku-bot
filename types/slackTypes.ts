@@ -1,7 +1,7 @@
 import { Callback } from 'aws-lambda'
 
 export interface SlackEventHandler {
-    (event: SlackAPI.Event, callback: Callback): void;
+    (event: SlackAPI.SlackEventPayload, callback: Callback): void;
 }
 
 export declare module SlackAPI {
