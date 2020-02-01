@@ -7,9 +7,9 @@ module.exports = function generateHelpResponse({ user }) {
                 type: 'mrkdwn',
                 text: [
                     responseText,
-                    '• Searching reddit for a meme - "@boku <any text> meme',
-                    '• Generating a meme - "@boku !create "<template name>" "text box 1" "text box 2" "..."',
-                    '• Checking if I\'m alive - "@boku <any text>',
+                    '• Searching reddit for a meme - `@boku <any text> meme`',
+                    '• Generating a meme - `@boku !create "<template name>" "text box 1" "text box 2" "..."`',
+                    '• Checking if I\'m alive - `@boku <any text>`',
                 ].join('\n'),
             },
         },
