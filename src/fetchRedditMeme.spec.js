@@ -1,13 +1,13 @@
 jest.mock('axios', () => ({ get: jest.fn() }));
 
 const axios = require('axios');
-const fetchRedditMeme = require('./fetchRedditMeme');
+import fetchRedditMeme from './fetchRedditMeme';
 
-const mockResponseData = require('../test-data/reddit/sampleAxiosSearchResponse.json');
+import mockResponseData from '../test-data/reddit/sampleAxiosSearchResponse.json';
 
 describe('fetchRedditMeme', () => {
     beforeAll(() => {
-        axios.get.mockResolvedValue(mockResponseData);
+        axios.request = jest.fn().mockResolvedValue(mockResponseData);
     });
 
     it('fetches memes', async () => {

@@ -1,4 +1,4 @@
-const parseInputText = require('./parseInputText');
+import parseInputText from './parseInputText';
 
 const MOCK_MENTIONS = [
     ['<@boku> !create "Too Damn High" "thefoss" "com/"', ['Too Damn High', 'thefoss', 'com/']],
