@@ -59,8 +59,9 @@ export declare module SlackAPI {
     }
 
     export interface SlackPostAttachment {
-        title: string;
+        title?: string;
         image_url?: string;
+        blocks?: Block[];
     }
 }
 
