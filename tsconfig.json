@@ -6,7 +6,7 @@
       "noImplicitAny": true,
       "resolveJsonModule": true,
       "moduleResolution": "node",
-      "lib": ["es2018"],
+      "lib": ["es2018", "es2017.object"],
       "module": "commonjs",
       "target": "es2018",
       "baseUrl": ".",

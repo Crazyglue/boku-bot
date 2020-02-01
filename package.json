@@ -5,10 +5,12 @@
   "main": "./src/index.js",
   "scripts": {
     "build:ts": "tsc",
+    "build:ts:watch": "tsc -w",
     "deploy": "npm test && npm run build:ts && npm run sam:build && npm run sam:deploy",
+    "push:s3": "/usr/local/bin/aws2 s3 cp function.zip s3://boku-bot-builds",
     "sam:build": "sam package --template-file template.yaml --s3-bucket boku-bot-builds --output-template-file out.yaml",
     "sam:deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region us-west-2",
-    "push:s3": "/usr/local/bin/aws2 s3 cp function.zip s3://boku-bot-builds",
+    "serve": "./node_modules/.bin/concurrently -n \"TS,SAM\" -c \"green,magenta\" \"npm run build:ts:watch\" \"sam local start-api\"",
     "test": "jest"
   },
   "keywords": [],
@@ -27,6 +29,7 @@
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "aws-sdk": "^2.610.0",
+    "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-airbnb-typescript": "^6.3.1",

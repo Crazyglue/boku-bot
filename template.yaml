@@ -10,7 +10,7 @@ Resources:
     BokuLambda:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: built/
+            CodeUri: built/src/
             Handler: index.handler
             Layers:
               - !Ref BokuBotDepLayer
