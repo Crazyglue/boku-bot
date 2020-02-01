@@ -7,6 +7,65 @@ Globals:
         Runtime: nodejs12.x
 
 Resources:
+    BokuBot-JsonParse:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: src/BokuBot-JsonParse
+            Handler: index.handler
+
+    BokuBot-SlackVerify:
+        Properties:
+            CodeUri: src/BokuBot-SlackVerify
+            Handler: index.handler
+            Layers:
+              - !Ref BokuBotDepLayer
+            Environment:
+                Variables:
+                    SLACK_ACCESS_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_ACCESS_TOKEN:1}}'
+                    SLACK_VERIFICATION_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_VERIFICATION_TOKEN:1}}'
+
+    BokuBot-ParseMention:
+        Properties:
+            CodeUri: src/BokuBot-ParseMention
+            Handler: index.handler
+            Layers:
+                - !Ref BokuBotDepLayer
+
+    BokuBot-UnsupportedMessage:
+        Properties:
+            CodeUri: src/BokuBot-UnsupportedMessage
+            Handler: index.handler
+            Layers:
+                - !Ref BokuBotDepLayer
+
+    BokuBot-MemeFinder:
+        Properties:
+            CodeUri: src/BokuBot-MemeFinder
+            Handler: index.handler
+            Layers:
+                - !Ref BokuBotDepLayer
+
+    BokuBot-TextInterpreter:
+        Properties:
+            CodeUri: src/BokuBot-TextInterpreter
+            Handler: index.handler
+            Layers:
+                - !Ref BokuBotDepLayer
+
+    BokuBot-MemeGenerator:
+        Properties:
+            CodeUri: src/BokuBot-MemeGenerator
+            Handler: index.handler
+            Layers:
+                - !Ref BokuBotDepLayer
+
+    BokuBot-MessageGenerator:
+        Properties:
+            CodeUri: src/BokuBot-MessageGenerator
+            Handler: index.handler
+            Layers:
+                - !Ref BokuBotDepLayer
+
     BokuLambda:
         Type: AWS::Serverless::Function
         Properties:
@@ -37,3 +96,100 @@ Resources:
               - nodejs12.x
             LicenseInfo: 'MIT'
             RetentionPolicy: Retain
+
+    BokuBotStateMachine:
+        Type: "AWS::StepFunctions::StateMachine"
+        Properties:
+            DefinitionString:
+            !Sub
+                - |-
+                    {
+                        "StartAt": "BokuBot-JsonParse",
+                        "States": {
+                          "BokuBot-JsonParse": {
+                            "Type": "Task",
+                            "Resource": "${JsonParse}",
+                            "Next": "BokuBot-MessageParser"
+                          },
+                          "BokuBot-MessageParser": {
+                            "Type": "Choice",
+                            "Choices": [
+                              {
+                                "Variable": "$.type",
+                                "StringEquals": "url_verification",
+                                "Next": "BokuBot-SlackVerify"
+                              },
+                              {
+                                "Variable": "$.type",
+                                "StringEquals": "event_callback",
+                                "Next": "BokuBot-ParseMention"
+                              }
+                            ],
+                            "Default": "BokuBot-UnsupportedMessage"
+                          },
+                          "BokuBot-SlackVerify": {
+                            "Type": "Task",
+                            "Resource": "${SlackVerify}",
+                            "Next": "BokuBot-MessageGenerator"
+                          },
+                          "BokuBot-ParseMention": {
+                            "Type": "Task",
+                            "Resource": "${ParseMention}"",
+                            "Next": "BokuBot-Mention"
+                          },
+                          "BokuBot-Mention": {
+                            "Type": "Choice",
+                            "Choices": [
+                              {
+                                "Variable": "$.isMeme",
+                                "BooleanEquals": true,
+                                "Next": "BokuBot-MemeFinder"
+                              },
+                              {
+                                "Variable": "$.isMeme",
+                                "BooleanEquals": false,
+                                "Next": "BokuBot-TextInterpreter"
+                              },
+                              {
+                                "Variable": "$.isMeme",
+                                "BooleanEquals": false,
+                                "Next": "BokuBot-MemeGenerator"
+                              }
+                            ]
+                          },
+                          "BokuBot-UnsupportedMessage": {
+                            "Type": "Task",
+                            "Resource": "${UnsupportedMessage}",
+                            "Next": "BokuBot-MessageGenerator"
+                          },
+                          "BokuBot-MemeFinder": {
+                            "Type": "Task",
+                            "Resource": "${MemeFinder}",
+                            "Next": "BokuBot-MessageGenerator"
+                          },
+                          "BokuBot-TextInterpreter": {
+                            "Type": "Task",
+                            "Resource": "${TextInterpreter}",
+                            "Next": "BokuBot-MessageGenerator"
+                          },
+                          "BokuBot-MemeGenerator": {
+                            "Type": "Task",
+                            "Resource": "${MemeGenerator}",
+                            "Next": "BokuBot-MessageGenerator"
+                          },
+                          "BokuBot-MessageGenerator": {
+                            "Type": "Task",
+                            "Resource": "${MessageGenerator}",
+                            "End": true
+                          }
+                        }
+                      }
+                - {JsonParse: !GetAtt [ BokuBot-JsonParse, Arn ]}
+                - {MemeFinder: !GetAtt [ BokuBot-MemeFinder, Arn ]}
+                - {MemeGenerator: !GetAtt [ BokuBot-MemeGenerator, Arn ]}
+                - {MessageGenerator: !GetAtt [ BokuBot-MessageGenerator, Arn ]}
+                - {ParseMention: !GetAtt [ BokuBot-ParseMention, Arn ]}
+                - {SlackVerify: !GetAtt [ BokuBot-SlackVerify, Arn ]}
+                - {TextInterpreter: !GetAtt [ BokuBot-TextInterpreter, Arn ]}
+                - {UnsupportedMessage: !GetAtt [ BokuBot-UnsupportedMessage, Arn ]}
+            RoleArn: !GetAtt [ StatesExecutionRole, Arn ]
