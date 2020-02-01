@@ -16,8 +16,11 @@ function images(post) {
 //     return `${post.data.title}\n${post.data.url}`;
 // }
 
-module.exports = async function fetchRedditMeme(searchString = '') {
-    const { data: { data: { children: posts = [] } } } = await fetchMemes(searchString);
+module.exports = async function fetchRedditMeme(event, authedUsers) {
+    const removedUsers = authedUsers.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
+    const sanitizedMessage = removedUsers.replace('meme', '').trim();
+
+    const { data: { data: { children: posts = [] } } } = await fetchMemes(sanitizedMessage);
 
     const imagePosts = posts.filter(images);
 
@@ -25,5 +28,18 @@ module.exports = async function fetchRedditMeme(searchString = '') {
     const randomPost = imagePosts[randomIndex];
     const postTitle = randomPost ? randomPost.data.title : '';
     const postUrl = randomPost ? randomPost.data.url : '';
-    return { text: postTitle, imageUrl: postUrl };
+
+    if (!postTitle || !postUrl) {
+        const text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`;
+        return { text };
+    }
+    const text = 'Heres a :partydank: meme';
+    const attachments = [
+        { title: postTitle, image_url: postUrl },
+    ];
+
+    return {
+        text,
+        attachments,
+    };
 };

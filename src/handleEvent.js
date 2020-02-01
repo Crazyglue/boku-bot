@@ -31,20 +31,8 @@ module.exports = async function handleEvent({ event, authed_users = [] }, callba
         const helpResponse = generateHelpResponse(event);
         sendSlackMessage(helpResponse, channel);
     } else if (isFetchMeme(event.text)) {
-        const removedUsers = authed_users.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
-        const sanitizedMessage = removedUsers.replace('meme', '').trim();
-        const { text: title, imageUrl } = await fetchRedditMeme(sanitizedMessage);
-        if (!title || !imageUrl) {
-            console.log('TCL: handleEvent -> title || !imageUrl', title || !imageUrl);
-            const text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`;
-            sendSlackMessage({ text }, event);
-        } else {
-            const text = 'Heres a :partydank: meme';
-            const attachments = [
-                { title, image_url: imageUrl },
-            ];
-            sendSlackMessage({ text, attachments }, channel);
-        }
+        const redditMemeResponse = await fetchRedditMeme(event, authed_users);
+        sendSlackMessage(redditMemeResponse, channel);
     } else if (curseRegex.test(event.text)) {
         const text = `<@${event.user}> thats very rude, why would you say that?`;
         sendSlackMessage({ text }, channel);
