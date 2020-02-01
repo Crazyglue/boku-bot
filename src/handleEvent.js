@@ -7,10 +7,11 @@ const generateMemeTemplatesResponse = require('./generateMemeTemplatesResponse')
 
 // Check functions
 const isCreateMeme = (eventText = '') => eventText.includes('!create');
-const isFetchMeme = (eventText = '') => eventText.toLowerCase().includes('meme');
 const isHelp = (eventText = '') => eventText.includes('!help');
 const isMemeTemplates = (eventText = '') => eventText.includes('!templates');
+const isFetchMeme = (eventText = '') => eventText.toLowerCase().includes('meme');
 const isCurseMessage = (eventText = '') => /(fuck|ass|bitch|shit|dick|bastard)/.test(eventText);
+
 // Response functions (that are one-liners)
 const generateCurseResponse = (event) => ({ text: `<@${event.user}> thats very rude, why would you say that?` });
 const generateDefaultResponse = (event) => ({ text: `<@${event.user}> I AM ALIIIIIIIIIVE` });
