@@ -1,7 +1,4 @@
 jest.mock('./fetchRedditMeme');
-jest.mock('https');
-
-const https = require('https');
 
 const handleEvent = require('./handleEvent');
 const fetchRedditMeme = require('./fetchRedditMeme');
@@ -12,7 +9,6 @@ describe('handleEvent', () => {
 
     beforeAll(() => {
         fetchRedditMeme.mockReturnValue(MOCK_IMAGE_NAME);
-        https.get = jest.fn();
     });
 
     it('santizes a response', async () => {

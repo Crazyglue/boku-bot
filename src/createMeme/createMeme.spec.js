@@ -41,8 +41,8 @@ describe('createMeme', () => {
                             template_id: '61527',
                             username: undefined,
                             password: undefined,
-                            text0: 'do',
-                            text1: 'memes',
+                            'boxes[0][text]': 'do',
+                            'boxes[1][text]': 'memes',
                         },
                     });
                 });
@@ -63,8 +63,8 @@ describe('createMeme', () => {
                             template_id: '61527',
                             username: undefined,
                             password: undefined,
-                            text0: 'do',
-                            text1: 'memes',
+                            'boxes[0][text]': 'do',
+                            'boxes[1][text]': 'memes',
                         },
                     });
                 });
