@@ -4,7 +4,7 @@ import { APIGatewayProxyEvent, Context, Callback } from 'aws-lambda';
 
 import slackVerification from './slackVerification';
 import handleEvent from './handleEvent'
-import { SlackEvents, SlackEventHandler } from '../types/slackTypes';
+import { SlackAPI, SlackEventHandler } from '../types/slackTypes';
 
 const eventToHandler: {[key: string]: SlackEventHandler} = {
     url_verification: slackVerification,
@@ -14,7 +14,7 @@ const eventToHandler: {[key: string]: SlackEventHandler} = {
 /* eslint-disable no-console */
 // Lambda handler
 exports.handler = (data: APIGatewayProxyEvent, context: Context, callback: Callback) => {
-    const parsedData: SlackEvents.Event = JSON.parse(data.body);
+    const parsedData: SlackAPI.Event = JSON.parse(data.body);
     const handleFn = eventToHandler[parsedData.type];
 
     console.log('processing ', parsedData.type)

@@ -1,17 +1,10 @@
 import { Callback } from 'aws-lambda'
 
 export interface SlackEventHandler {
-    (event: SlackEvents.Event, callback: Callback): void;
+    (event: SlackAPI.Event, callback: Callback): void;
 }
 
-// export interface SlackEvent {
-//     type: string;
-//     event: any;
-//     authed_users: String[];
-// }
-
-export declare module SlackEvents {
-
+export declare module SlackAPI {
     export interface Edited {
         user: string;
         ts: string;
@@ -54,5 +47,14 @@ export declare module SlackEvents {
         authed_users: string[];
     }
 
+    export interface SlackPost {
+        attachments?: SlackPostAttachment[];
+        text: string;
+    }
+
+    export interface SlackPostAttachment {
+        title: string;
+        image_url?: string;
+    }
 }
 
