@@ -19,8 +19,12 @@ export declare module SlackAPI {
 
     export interface Block {
         type: string;
-        block_id: string;
-        elements: Element[];
+        block_id?: string;
+        elements?: Element[];
+        text?: {
+            type: string;
+            text: string;
+        }
     }
 
     export interface Event {
@@ -50,7 +54,8 @@ export declare module SlackAPI {
 
     export interface SlackPost {
         attachments?: SlackPostAttachment[];
-        text: string;
+        blocks?: Block[];
+        text?: string;
     }
 
     export interface SlackPostAttachment {
