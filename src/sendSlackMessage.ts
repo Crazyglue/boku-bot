@@ -1,9 +1,11 @@
-const axios = require('axios');
+import axios from 'axios';
+
+import { SlackAPI } from './../types/slackTypes';
 
 const { SLACK_ACCESS_TOKEN } = process.env;
 
 // Post message to Slack - https://api.slack.com/methods/chat.postMessage
-module.exports = function sendSlackMessage(message = {}, channel = null) {
+export default function sendSlackMessage(message: SlackAPI.SlackPost, channel: string = '') {
     if (!channel) {
         return;
     }

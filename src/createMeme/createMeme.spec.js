@@ -1,17 +1,16 @@
 jest.mock('axios');
 
-const axios = require('axios');
-const createMeme = require('./index');
+import axios from 'axios';
+import createMeme, { ERROR_MESSAGE } from './index';
 
 const MOCK_BOKU_MENTION = '<@boku> !create "y u no" "do" "memes"';
 
 describe('createMeme', () => {
     describe('when input text is blank, not provided, or null', () => {
         it('returns null', async () => {
-            expect(await createMeme({ text: null })).toEqual(createMeme.ERROR_MESSAGE);
-            expect(await createMeme({})).toEqual(createMeme.ERROR_MESSAGE);
-            expect(await createMeme({ text: '' })).toEqual(createMeme.ERROR_MESSAGE);
-            expect(await createMeme()).toEqual(createMeme.ERROR_MESSAGE);
+            expect(await createMeme({ text: null })).toEqual(ERROR_MESSAGE);
+            expect(await createMeme({})).toEqual(ERROR_MESSAGE);
+            expect(await createMeme({ text: '' })).toEqual(ERROR_MESSAGE);
         });
     });
 
@@ -23,7 +22,7 @@ describe('createMeme', () => {
 
             describe('when the imgflip call is successful', () => {
                 beforeAll(async () => {
-                    axios.mockResolvedValue({ data: { success: true, data: { url: MOCK_URL } } });
+                    axios.request = jest.fn().mockResolvedValue({ data: { success: true, data: { url: MOCK_URL } } });
                     result = await createMeme({ text: MOCK_BOKU_MENTION, user: 'abc' });
                 });
 
@@ -34,15 +33,15 @@ describe('createMeme', () => {
                             { title: '', image_url: MOCK_URL },
                         ],
                     });
-                    expect(axios).toHaveBeenCalledWith({
+                    expect(axios.request).toHaveBeenCalledWith({
                         url: 'https://api.imgflip.com/caption_image',
                         method: 'post',
                         params: {
                             template_id: '61527',
                             username: undefined,
                             password: undefined,
-                            text0: 'do',
-                            text1: 'memes',
+                            'boxes[0][text]': 'do',
+                            'boxes[1][text]': 'memes',
                         },
                     });
                 });
@@ -50,21 +49,21 @@ describe('createMeme', () => {
 
             describe('when the imgflip call is not successful', () => {
                 beforeAll(async () => {
-                    axios.mockResolvedValue({ data: { success: false } });
+                    axios.request = jest.fn().mockResolvedValue({ data: { success: false } });
                     result = await createMeme({ text: MOCK_BOKU_MENTION });
                 });
 
                 it('returns null', async () => {
-                    expect(result).toEqual(createMeme.ERROR_MESSAGE);
-                    expect(axios).toHaveBeenCalledWith({
+                    expect(result).toEqual(ERROR_MESSAGE);
+                    expect(axios.request).toHaveBeenCalledWith({
                         url: 'https://api.imgflip.com/caption_image',
                         method: 'post',
                         params: {
                             template_id: '61527',
                             username: undefined,
                             password: undefined,
-                            text0: 'do',
-                            text1: 'memes',
+                            'boxes[0][text]': 'do',
+                            'boxes[1][text]': 'memes',
                         },
                     });
                 });

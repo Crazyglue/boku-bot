@@ -1,18 +1,15 @@
 jest.mock('./fetchRedditMeme');
-jest.mock('https');
 
-const https = require('https');
+import handleEvent from './handleEvent';
+import fetchRedditMeme from './fetchRedditMeme';
 
-const handleEvent = require('./handleEvent');
-const fetchRedditMeme = require('./fetchRedditMeme');
-const sampleMention = require('../test-data/slack/sampleMention.json');
+import sampleMention from '../test-data/slack/sampleMention.json';
 
 describe('handleEvent', () => {
     const MOCK_IMAGE_NAME = 'foo-bar';
 
     beforeAll(() => {
         fetchRedditMeme.mockReturnValue(MOCK_IMAGE_NAME);
-        https.get = jest.fn();
     });
 
     it('santizes a response', async () => {

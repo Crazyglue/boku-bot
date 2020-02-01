@@ -4,29 +4,44 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "build": "sam package --template-file template.yaml --s3-bucket boku-bot-builds --output-template-file out.yaml    ",
-    "deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region us-west-2 ",
-    "update:lambda": "/usr/local/bin/aws2 lambda update-function-code --function-name BokuLambda --region us-west-2 --s3-bucket boku-bot-builds --s3-key function.zip",
-    "push": "/usr/local/bin/aws2 lambda update-function-code --function-name BokuLambda --zip-file fileb://function.zip --region us-west-2",
+    "build:ts": "tsc",
+    "build:ts:watch": "tsc -w",
+    "deploy": "npm test && npm run build:ts && npm run sam:build && npm run sam:deploy",
     "push:s3": "/usr/local/bin/aws2 s3 cp function.zip s3://boku-bot-builds",
+    "sam:build": "sam package --template-file template.yaml --s3-bucket boku-bot-builds --output-template-file out.yaml",
+    "sam:deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region us-west-2",
+    "serve": "./node_modules/.bin/concurrently -n \"TS,SAM\" -c \"green,magenta\" \"npm run build:ts:watch\" \"sam local start-api\"",
     "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/aws-lambda": "^8.10.40",
     "axios": "^0.19.2",
-    "dotenv": "^8.2.0",
-    "https": "^1.0.0",
-    "qs": "^6.9.1",
-    "querystring": "^0.2.0"
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@slack/web-api": "^5.7.0",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/axios": "^0.14.0",
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
     "aws-sdk": "^2.610.0",
+    "babel-jest": "^25.1.0",
+    "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-jest": "^23.6.0",
-    "jest": "^25.1.0"
+    "jest": "^25.1.0",
+    "ts-jest": "^25.1.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
   }
 }
