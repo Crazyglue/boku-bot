@@ -45,6 +45,7 @@ export declare module SlackAPI {
         event_id: string;
         event_time: number;
         authed_users: string[];
+        challenge?: string;
     }
 
     export interface SlackPost {
