@@ -1,3 +1,5 @@
+import { SlackEvents } from '../types/slackTypes';
+
 const { DEFAULT_200_RESPONSE } = require('./constants');
 const fetchRedditMeme = require('./fetchRedditMeme');
 const createMeme = require('./createMeme');
@@ -13,8 +15,8 @@ const isFetchMeme = (eventText = '') => eventText.toLowerCase().includes('meme')
 const isCurseMessage = (eventText = '') => /(fuck|ass|bitch|shit|dick|bastard)/.test(eventText);
 
 // Response functions (that are one-liners)
-const generateCurseResponse = (event) => ({ text: `<@${event.user}> thats very rude, why would you say that?` });
-const generateDefaultResponse = (event) => ({ text: `<@${event.user}> I AM ALIIIIIIIIIVE` });
+const generateCurseResponse = (event: SlackEvents.Event) => ({ text: `<@${event.user}> thats very rude, why would you say that?` });
+const generateDefaultResponse = (event: SlackEvents.Event) => ({ text: `<@${event.user}> I AM ALIIIIIIIIIVE` });
 
 const messageTypeToHandler = [
     [isCreateMeme, createMeme],
@@ -25,7 +27,7 @@ const messageTypeToHandler = [
 ];
 
 /* eslint-disable no-console */
-module.exports = async function handleEvent({ event, authed_users = [] }, callback) {
+export default async function handleEvent({ event, authed_users = [] }: SlackEvents.SlackEventPayload, callback) {
     const { channel } = event;
 
     const eventHandler = messageTypeToHandler.reduce((handler, [checkFn, handlerFn]) => {
