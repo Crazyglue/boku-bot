@@ -6,7 +6,7 @@ const { IMAGE_FLIP_USERNAME, IMAGE_FLIP_PASSWORD } = process.env;
 
 const ERROR_MESSAGE = { text: ':ohno: Something went wrong :ohno:' };
 
-module.exports = async function createMeme({ text = '' } = {}) {
+module.exports = async function createMeme({ text = '', user } = {}) {
     if (!text || text.length === 0) {
         return ERROR_MESSAGE;
     }
@@ -15,10 +15,16 @@ module.exports = async function createMeme({ text = '' } = {}) {
 
     const template = memeTable.find((memeTemplate) => memeTemplate.name.toLowerCase() === templateName.toLowerCase());
 
-    const textData = textValues.reduce((acc, snippet, index) => ({
+    const boxes = textValues.reduce((acc, snippet, index) => ({
         ...acc,
-        [`text${index}`]: snippet,
+        [`boxes[${index}][text]`]: snippet,
     }), {});
+
+    // const boxes = textValues.map((boxText) => ({
+    //     text: boxText,
+    // }));
+
+    console.log('TCL: boxes', boxes);
 
     const response = await axios({
         url: 'https://api.imgflip.com/caption_image',
@@ -27,12 +33,12 @@ module.exports = async function createMeme({ text = '' } = {}) {
             template_id: template.id,
             username: IMAGE_FLIP_USERNAME,
             password: IMAGE_FLIP_PASSWORD,
-            ...textData,
+            ...boxes,
         },
     });
 
     if (response.data.success) {
-        const successText = 'Heres your custom :partydank: meme';
+        const successText = `<@${user}> 's :partydank: meme`;
         const attachments = [
             { title: '', image_url: response.data.data.url },
         ];

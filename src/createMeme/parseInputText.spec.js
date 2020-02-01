@@ -7,6 +7,7 @@ const MOCK_MENTIONS = [
     ['<@boku> !create "y u no" "do" "memes"', ['y u no', 'do', 'memes']],
     ['<@boku> !create "y u no" "do"', ['y u no', 'do']],
     ['@boku !create “Arthur Fist” “I hate” “d-gens from upcountry”', ['Arthur Fist', 'I hate', 'd-gens from upcountry']],
+    ['@boku !create “American Chopper Argument” “Asset IO is not an acronym” “IO = input/output” “yeah so it makes sense” “SO IT IS AN ACRONYM” “NOT AN ACRONYM”', ['American Chopper Argument', 'Asset IO is not an acronym', 'IO = input/output', 'yeah so it makes sense', 'SO IT IS AN ACRONYM', 'NOT AN ACRONYM']],
     ['<@boku> !create "y u no" "do" "memes" "asdf", "DSAF"', ['y u no', 'do', 'memes', 'asdf', 'DSAF']],
     ['<@boku> !create "Imagination Spongebob" "very important to me  i" "remember reading a lot about"', ['Imagination Spongebob', 'very important to me  i', 'remember reading a lot about']],
     ['@boku !create "Spongebob Ight Imma Head Out" "< https" "//www r-project"', ['Spongebob Ight Imma Head Out', '< https', '//www r-project']],

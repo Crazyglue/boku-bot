@@ -24,12 +24,12 @@ describe('createMeme', () => {
             describe('when the imgflip call is successful', () => {
                 beforeAll(async () => {
                     axios.mockResolvedValue({ data: { success: true, data: { url: MOCK_URL } } });
-                    result = await createMeme({ text: MOCK_BOKU_MENTION });
+                    result = await createMeme({ text: MOCK_BOKU_MENTION, user: 'abc' });
                 });
 
                 it('returns the meme url', async () => {
                     expect(result).toEqual({
-                        text: 'Heres your custom :partydank: meme',
+                        text: '<@abc> \'s :partydank: meme',
                         attachments: [
                             { title: '', image_url: MOCK_URL },
                         ],
