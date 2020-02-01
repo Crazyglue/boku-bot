@@ -11,7 +11,12 @@ describe('fetchRedditMeme', () => {
     });
 
     it('fetches memes', async () => {
-        const result = await fetchRedditMeme('boomer');
-        expect(result).toEqual({ text: expect.any(String), imageUrl: expect.any(String) });
+        const result = await fetchRedditMeme({ text: 'boomer' });
+        expect(result).toEqual({
+            text: expect.any(String),
+            attachments: [
+                { image_url: expect.any(String), title: expect.any(String) },
+            ],
+        });
     });
 });

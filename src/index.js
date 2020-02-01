@@ -8,6 +8,7 @@ const eventToHandler = {
     event_callback: handleEvent,
 };
 
+/* eslint-disable no-console */
 // Lambda handler
 exports.handler = (data, context, callback) => {
     // console.log('TCL: exports.handler -> data', data);

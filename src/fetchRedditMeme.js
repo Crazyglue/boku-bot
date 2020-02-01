@@ -16,7 +16,7 @@ function images(post) {
 //     return `${post.data.title}\n${post.data.url}`;
 // }
 
-module.exports = async function fetchRedditMeme(event, authedUsers) {
+module.exports = async function fetchRedditMeme(event = {}, authedUsers = []) {
     const removedUsers = authedUsers.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
     const sanitizedMessage = removedUsers.replace('meme', '').trim();
 

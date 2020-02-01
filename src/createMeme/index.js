@@ -4,9 +4,11 @@ const parseInputText = require('./parseInputText');
 
 const { IMAGE_FLIP_USERNAME, IMAGE_FLIP_PASSWORD } = process.env;
 
-module.exports = async function createMeme(text = '') {
+const ERROR_MESSAGE = { text: ':ohno: Something went wrong :ohno:' };
+
+module.exports = async function createMeme({ text = '' } = {}) {
     if (!text || text.length === 0) {
-        return null;
+        return ERROR_MESSAGE;
     }
 
     const [templateName, ...textValues] = parseInputText(text);
@@ -30,7 +32,17 @@ module.exports = async function createMeme(text = '') {
     });
 
     if (response.data.success) {
-        return response.data.data.url;
+        const successText = 'Heres your custom :partydank: meme';
+        const attachments = [
+            { title: '', image_url: response.data.data.url },
+        ];
+
+        return {
+            text: successText,
+            attachments,
+        };
     }
-    return null;
+    return ERROR_MESSAGE;
 };
+
+module.exports.ERROR_MESSAGE = ERROR_MESSAGE;

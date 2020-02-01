@@ -8,10 +8,10 @@ const MOCK_BOKU_MENTION = '<@boku> !create "y u no" "do" "memes"';
 describe('createMeme', () => {
     describe('when input text is blank, not provided, or null', () => {
         it('returns null', async () => {
-            expect(await createMeme(null)).toEqual(null);
-            expect(await createMeme(undefined)).toEqual(null);
-            expect(await createMeme('')).toEqual(null);
-            expect(await createMeme()).toEqual(null);
+            expect(await createMeme({ text: null })).toEqual(createMeme.ERROR_MESSAGE);
+            expect(await createMeme({})).toEqual(createMeme.ERROR_MESSAGE);
+            expect(await createMeme({ text: '' })).toEqual(createMeme.ERROR_MESSAGE);
+            expect(await createMeme()).toEqual(createMeme.ERROR_MESSAGE);
         });
     });
 
@@ -24,11 +24,16 @@ describe('createMeme', () => {
             describe('when the imgflip call is successful', () => {
                 beforeAll(async () => {
                     axios.mockResolvedValue({ data: { success: true, data: { url: MOCK_URL } } });
-                    result = await createMeme(MOCK_BOKU_MENTION);
+                    result = await createMeme({ text: MOCK_BOKU_MENTION });
                 });
 
                 it('returns the meme url', async () => {
-                    expect(result).toEqual(MOCK_URL);
+                    expect(result).toEqual({
+                        text: 'Heres your custom :partydank: meme',
+                        attachments: [
+                            { title: '', image_url: MOCK_URL },
+                        ],
+                    });
                     expect(axios).toHaveBeenCalledWith({
                         url: 'https://api.imgflip.com/caption_image',
                         method: 'post',
@@ -46,11 +51,11 @@ describe('createMeme', () => {
             describe('when the imgflip call is not successful', () => {
                 beforeAll(async () => {
                     axios.mockResolvedValue({ data: { success: false } });
-                    result = await createMeme(MOCK_BOKU_MENTION);
+                    result = await createMeme({ text: MOCK_BOKU_MENTION });
                 });
 
                 it('returns null', async () => {
-                    expect(result).toEqual(null);
+                    expect(result).toEqual(createMeme.ERROR_MESSAGE);
                     expect(axios).toHaveBeenCalledWith({
                         url: 'https://api.imgflip.com/caption_image',
                         method: 'post',

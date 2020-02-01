@@ -15,18 +15,8 @@ module.exports = async function handleEvent({ event, authed_users = [] }, callba
 
     console.log('TCL: handleEvent -> event.text', event.text);
     if (isCreateMeme(event.text)) {
-        const createdMeme = await createMeme(event.text);
-        console.log('TCL: handleEvent -> createdMeme', createdMeme);
-        if (!createdMeme) {
-            const text = ':ohno: Something went wrong :ohno:';
-            sendSlackMessage({ text }, channel);
-        } else {
-            const text = 'Heres your custom :partydank: meme';
-            const attachments = [
-                { title: '', image_url: createdMeme },
-            ];
-            sendSlackMessage({ text, attachments }, channel);
-        }
+        const createdMeme = await createMeme(event);
+        sendSlackMessage(createdMeme, channel);
     } else if (isHelp(event.text)) {
         const helpResponse = generateHelpResponse(event);
         sendSlackMessage(helpResponse, channel);
