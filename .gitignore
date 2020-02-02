@@ -4,3 +4,4 @@ node_modules/
 function.zip
 out.yaml
 built/
+coverage/
