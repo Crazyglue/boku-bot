@@ -1,12 +1,12 @@
-import { SlackAPI } from '../types/slackTypes';
+import { SlackAPI } from '../../types/slackTypes';
 import { Callback } from 'aws-lambda';
 
-import { DEFAULT_200_RESPONSE } from './constants';
-import fetchRedditMeme from './fetchRedditMeme';
-import createMeme from './createMeme';
-import sendSlackMessage from './sendSlackMessage';
-import generateHelpResponse from './generateHelpResponse';
-import generateMemeTemplatesResponse from './generateMemeTemplatesResponse';
+import { DEFAULT_200_RESPONSE } from '../constants';
+import fetchRedditMeme from '../fetchRedditMeme';
+import createMeme from '../createMeme';
+import sendSlackMessage from '../sendSlackMessage';
+import generateHelpResponse from '../commands/generateHelpResponse';
+import generateMemeTemplatesResponse from '../commands/generateMemeTemplatesResponse';
 
 // Check functions
 const isCreateMeme = (eventText = ''): boolean => eventText.includes('!create');

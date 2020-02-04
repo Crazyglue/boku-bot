@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { SlackAPI } from './../types/slackTypes';
+import { SlackAPI } from '../../types/slackTypes';
 
 const { SLACK_ACCESS_TOKEN } = process.env;
 

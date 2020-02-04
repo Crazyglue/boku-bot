@@ -1,6 +1,6 @@
 jest.mock('./fetchRedditMeme');
 
-import handleEvent from './handleEvent';
+import handleEvent from './index';
 import fetchRedditMeme from './fetchRedditMeme';
 
 import sampleMention from '../test-data/slack/sampleMention.json';

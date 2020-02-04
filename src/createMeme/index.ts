@@ -27,7 +27,7 @@ interface ImageFlipBox {
     [key: string]: string;
 }
 
-export default async function createMeme({ text = '', user }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
+export default async function createMeme({ text = '' }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
     if (!text || text.length === 0) {
         return ERROR_MESSAGE;
     }
