@@ -57,7 +57,7 @@ export default async function createMeme({ text = '', user }: SlackAPI.Event): P
     }).then(res => res.data);
 
     if (response.success) {
-        const successText = `<@${user}> 's :partydank: meme`;
+        const successText = `Heres your :partydank: meme`;
         const attachments = [
             { title: '', image_url: response.data.url },
         ];
