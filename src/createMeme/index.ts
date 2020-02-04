@@ -1,31 +1,18 @@
-import { SlackAPI } from "./../../types/slackTypes";
-
 import axios from 'axios';
+import FuzzySearch from 'fuzzy-search';
+
+import { ImageFlip } from './../../types/imageFlipTypes';
+import { SlackAPI } from "./../../types/slackTypes";
 import memeTable from './memeTemplates.json';
 import parseInputText from './parseInputText';
 
 const { IMAGE_FLIP_USERNAME, IMAGE_FLIP_PASSWORD } = process.env;
 
+const searcher = new FuzzySearch<ImageFlip.ImageFlipMemeTemplate>(memeTable, ['name'], {
+    caseSensitive: false,
+});
+
 export const ERROR_MESSAGE = { text: ':ohno: Something went wrong :ohno:' };
-
-interface ImageFlipResponse {
-    success: boolean;
-    data: {
-        url: string;
-    }
-}
-
-interface ImageFlipCreateParams {
-    template_id: string;
-    username: string;
-    password: string;
-    text0?: string;
-    text1?: string;
-}
-
-interface ImageFlipBox {
-    [key: string]: string;
-}
 
 export default async function createMeme({ text = '' }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
     if (!text || text.length === 0) {
@@ -34,23 +21,29 @@ export default async function createMeme({ text = '' }: SlackAPI.Event): Promise
 
     const [templateName, ...textValues] = parseInputText(text);
 
-    const template = memeTable.find((memeTemplate) => memeTemplate.name.toLowerCase() === templateName.toLowerCase());
+    const [ template ] = searcher.search(templateName);
 
-    const boxes: ImageFlipBox = textValues.reduce((acc, snippet, index) => ({
+    if (!template) {
+        return {
+            text: `Sorry, couldnt find a meme template for: ${text}`
+        }
+    }
+
+    const boxes: ImageFlip.ImageFlipBox = textValues.reduce((acc, snippet, index) => ({
         ...acc,
         [`boxes[${index}][text]`]: snippet,
     }), {});
 
     console.log('TCL: boxes', boxes);
 
-    const imageFlipParams: ImageFlipCreateParams = {
+    const imageFlipParams: ImageFlip.ImageFlipCreateParams = {
         template_id: template.id,
         username: IMAGE_FLIP_USERNAME,
         password: IMAGE_FLIP_PASSWORD,
         ...boxes,
     }
 
-    const response = await axios.request<ImageFlipResponse>({
+    const response = await axios.request<ImageFlip.ImageFlipResponse>({
         url: 'https://api.imgflip.com/caption_image',
         method: 'post',
         params: imageFlipParams,
