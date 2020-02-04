@@ -1,9 +1,9 @@
 jest.mock('axios', () => ({ get: jest.fn() }));
 
 const axios = require('axios');
-import fetchRedditMeme from './fetchRedditMeme';
+import fetchRedditMeme from './index';
 
-import mockResponseData from '../test-data/reddit/sampleAxiosSearchResponse.json';
+import mockResponseData from '../../test-data/reddit/sampleAxiosSearchResponse.json';
 
 describe('fetchRedditMeme', () => {
     describe('when a meme can be found', () => {

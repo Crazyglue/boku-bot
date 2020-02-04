@@ -1,7 +1,7 @@
 jest.mock('axios');
 
 const axios = require('axios');
-import sendSlackMessage from './sendSlackMessage';
+import sendSlackMessage from './index'
 
 describe('sendSlackMessage', () => {
     describe('when no channel provided', () => {

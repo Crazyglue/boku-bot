@@ -1,5 +1,5 @@
-import { SlackAPI } from './../types/slackTypes';
-import memeTemplates from './createMeme/memeTemplates.json';
+import { SlackAPI } from '../../types/slackTypes';
+import memeTemplates from '../createMeme/memeTemplates.json';
 
 interface MemeTemplate {
     id: string;

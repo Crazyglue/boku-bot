@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { SlackAPI } from '../types/slackTypes';
-import { Reddit } from '../types/redditTypes';
+import { SlackAPI } from '../../types/slackTypes';
+import { Reddit } from '../../types/redditTypes';
 
 function fetchMemes(searchString: string) {
     const searchUrl = `https://www.reddit.com/r/dankmemes/search.json?q=${searchString}&sort=top`;
