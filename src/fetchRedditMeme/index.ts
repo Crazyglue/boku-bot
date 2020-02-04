@@ -12,9 +12,10 @@ function fetchMemes(searchString: string) {
 }
 /* eslint-disable no-console */
 const imageExtensionRegex = /\.(png|jpg|jpeg|gif)/;
+const gifvExtensionRegex = /^[^.]+$|\.(?!(gifv))([^.]+$)/;
 
 function images(post: Reddit.RedditPost) {
-    return imageExtensionRegex.test(post.data.url);
+    return imageExtensionRegex.test(post.data.url) && gifvExtensionRegex.test(post.data.url);
 }
 
 export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
