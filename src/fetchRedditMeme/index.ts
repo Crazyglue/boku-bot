@@ -26,18 +26,18 @@ export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers
 
     const imagePosts = posts.filter(images);
 
-    const randomIndex = Math.floor(imagePosts.length * Math.random());
-    const randomPost = imagePosts[randomIndex];
-    const postTitle = randomPost ? randomPost.data.title : '';
-    const postUrl = randomPost ? randomPost.data.url : '';
-
-    if (!postTitle || !postUrl) {
+    if (imagePosts.length === 0) {
         const text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`;
         return { text };
     }
+
+    const randomIndex = Math.floor(imagePosts.length * Math.random());
+    const randomPost = imagePosts[randomIndex];
+    const { title, url } = randomPost.data;
+
     const text = 'Heres a :partydank: meme';
     const attachments = [
-        { title: postTitle, image_url: postUrl },
+        { title, image_url: url },
     ];
 
     return {
