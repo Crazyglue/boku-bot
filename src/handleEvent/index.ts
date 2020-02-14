@@ -17,8 +17,8 @@ const isFetchMeme = (eventText = ''): boolean => eventText.toLowerCase().include
 const isCurseMessage = (eventText = ''): boolean => /(fuck|ass|bitch|shit|dick|bastard)/.test(eventText);
 
 // Response functions (that are one-liners)
-const generateCurseResponse = async (event: SlackAPI.Event) => ({ text: `<@${event.user}> thats very rude, why would you say that?` });
-const generateDefaultResponse = (event: SlackAPI.Event) => ({ text: `<@${event.user}> I AM ALIIIIIIIIIVE` });
+const generateCurseResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> thats very rude, why would you say that?` });
+const generateDefaultResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> I AM ALIIIIIIIIIVE` });
 
 type CheckFunction = (event: string) => boolean;
 
@@ -40,20 +40,6 @@ const ddb = new AWS.DynamoDB.DocumentClient();
 
 /* eslint-disable no-console */
 export default async function handleEvent({ event, authed_users = [], ...restProps }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
-    try {
-        await ddb.put({
-            TableName: tableName,
-            Item: {
-                SlackMessageId: restProps.event_id,
-                Text: event.text,
-                Channel: event.channel,
-                User: event.user
-            }
-        }).promise()
-    } catch (e) {
-        console.log('cannot save transaction');
-    }
-
     // response to slack acknowledging the event was received
     callback(null, DEFAULT_200_RESPONSE);
 
@@ -67,6 +53,22 @@ export default async function handleEvent({ event, authed_users = [], ...restPro
         message = await eventHandler(event, authed_users);
     } else {
         message = await generateDefaultResponse(event);
+    }
+
+    try {
+        await ddb.put({
+            TableName: tableName,
+            Item: {
+                SlackMessageId: restProps.event_id,
+                Text: event.text,
+                Channel: event.channel,
+                User: event.user,
+                ReponseText: message.text,
+                ResponseAttachments: JSON.stringify(message.attachments)
+            }
+        }).promise()
+    } catch (e) {
+        console.log('cannot save transaction');
     }
 
     console.log('Sending slack message: ', message);
