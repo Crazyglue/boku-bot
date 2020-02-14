@@ -7,9 +7,8 @@
     "build:ts": "tsc",
     "build:ts:watch": "tsc -w",
     "deploy": "npm test && npm run build:ts && npm run sam:build && npm run sam:deploy",
-    "push:s3": "/usr/local/bin/aws2 s3 cp function.zip s3://boku-bot-builds",
-    "sam:build": "sam package --template-file template.yaml --s3-bucket boku-bot-builds --output-template-file out.yaml",
-    "sam:deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region us-west-2",
+    "sam:build": "sam package --template-file template.yaml --s3-bucket $(grep BOKU_BOT_S3_BUCKET .env | cut -d '=' -f2) --output-template-file out.yaml",
+    "sam:deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region $(grep AWS_REGION .env | cut -d '=' -f2)",
     "serve": "./node_modules/.bin/concurrently -n \"TS,SAM\" -c \"green,magenta\" \"npm run build:ts:watch\" \"sam local start-api\"",
     "test": "jest"
   },
