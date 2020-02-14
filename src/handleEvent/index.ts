@@ -35,6 +35,9 @@ const messageTypeToHandler: EventHandlerTuple[] = [
 
 /* eslint-disable no-console */
 export default async function handleEvent({ event, authed_users = [] }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
+    // response to slack acknowledging the event was received
+    callback(null, DEFAULT_200_RESPONSE);
+
     const { channel } = event;
 
     const [ , eventHandler ] = messageTypeToHandler.find(([ check ]) => check(event.text)) || []
@@ -50,6 +53,4 @@ export default async function handleEvent({ event, authed_users = [] }: SlackAPI
     console.log('Sending slack message: ', message);
     sendSlackMessage(message, channel);
 
-    // response to slack acknowledging the event was received
-    callback(null, DEFAULT_200_RESPONSE);
 };

@@ -3,8 +3,10 @@ Transform: AWS::Serverless-2016-10-31
 Description: BokuBot
 Globals:
     Function:
-        Timeout: 3
+        MemorySize: 512
+        Timeout: 60
         Runtime: nodejs12.x
+        AutoPublishAlias: Latest
 
 Resources:
     BokuLambda:
