@@ -5,3 +5,4 @@ function.zip
 out.yaml
 built/
 coverage/
+.vscode/
