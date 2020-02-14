@@ -22,12 +22,17 @@ Resources:
                     Properties:
                         Path: /
                         Method: any
+            Policies:
+                - DynamoDBCrudPolicy:
+                    TableName: !Ref BokuTable
             Environment:
                 Variables:
                     SLACK_ACCESS_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_ACCESS_TOKEN:1}}'
                     SLACK_VERIFICATION_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_VERIFICATION_TOKEN:1}}'
                     IMAGE_FLIP_USERNAME: '{{resolve:ssm:IMAGE_FLIP_USERNAME:1}}'
                     IMAGE_FLIP_PASSWORD: '{{resolve:ssm:IMAGE_FLIP_PASSWORD:1}}'
+                    DYNAMO_TABLE_NAME: !Ref BokuTable
+
 
     BokuBotDepLayer:
         Type: AWS::Serverless::LayerVersion
@@ -39,3 +44,21 @@ Resources:
               - nodejs12.x
             LicenseInfo: 'MIT'
             RetentionPolicy: Retain
+
+    BokuTable:
+        Type: AWS::Serverless::SimpleTable
+        Properties:
+            PrimaryKey:
+                Name: SlackMessageId
+                Type: String
+            ProvisionedThroughput:
+                ReadCapacityUnits: 10
+                WriteCapacityUnits: 10
+            TableName: BokuRequestsTable
+            Tags:
+                Name: BokuTable
+
+Outputs:
+    ApiURL:
+        Description: "API endpoint URL"
+        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/resource/"

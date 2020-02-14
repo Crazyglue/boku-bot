@@ -1,5 +1,6 @@
 import { SlackAPI } from '../../types/slackTypes';
 import { Callback } from 'aws-lambda';
+import * as AWS from 'aws-sdk';
 
 import { DEFAULT_200_RESPONSE } from '../constants';
 import fetchRedditMeme from '../fetchRedditMeme';
@@ -33,8 +34,26 @@ const messageTypeToHandler: EventHandlerTuple[] = [
     [isCurseMessage, generateCurseResponse],
 ];
 
+const tableName = process.env.DYNAMO_TABLE_NAME;
+
+const ddb = new AWS.DynamoDB.DocumentClient();
+
 /* eslint-disable no-console */
-export default async function handleEvent({ event, authed_users = [] }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
+export default async function handleEvent({ event, authed_users = [], ...restProps }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
+    try {
+        await ddb.put({
+            TableName: tableName,
+            Item: {
+                SlackMessageId: restProps.event_id,
+                Text: event.text,
+                Channel: event.channel,
+                User: event.user
+            }
+        }).promise()
+    } catch (e) {
+        console.log('cannot save transaction');
+    }
+
     // response to slack acknowledging the event was received
     callback(null, DEFAULT_200_RESPONSE);
 
