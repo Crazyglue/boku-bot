@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { SlackAPI } from '../../types/slackTypes';
+import { SlackAPI } from '../../../types/slackTypes';
+import logger from '../../logger';
+import removeUsers from '../removeUsers';
 
 const { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } = process.env;
 
@@ -18,16 +20,26 @@ async function fetchMemes(searchString: string) {
 }
 
 export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
-    const removedUsers = authedUsers.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
-    const sanitizedMessage = removedUsers.trim();
+    const log = logger.child({ event, authedUsers, function: 'fetchGoogleImagesMeme' });
+    const sanitizedMessage = removeUsers(event.text)
+
+    log.info(`sanitizedMessage: ${sanitizedMessage}`);
 
     const memes = await fetchMemes(sanitizedMessage);
     if (memes.length === 0) {
+        log.error('No memes found using google search');
         throw new Error('No memes found from google');
     }
 
     const randomIndex = Math.floor(Math.random() * memes.length);
     const selectedMeme = memes[randomIndex];
+
+    log.info(`selectedMeme: ${selectedMeme}`)
+
+    if (!selectedMeme.link) {
+        log.child({ selectedMeme }).error('Meme doesnt have a link');
+        throw new Error('Meme doesnt have a link');
+    }
 
     const text = `Heres a :partydank: meme from ${selectedMeme.displayLink}`
     const attachments = [
