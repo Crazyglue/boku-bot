@@ -3,7 +3,7 @@ import { Callback } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 
 import { DEFAULT_200_RESPONSE } from '../constants';
-import fetchRedditMeme from '../fetchRedditMeme';
+import fetchMeme from '../fetchMeme';
 import createMeme from '../createMeme';
 import sendSlackMessage from '../sendSlackMessage';
 import generateHelpResponse from '../commands/generateHelpResponse';
@@ -30,7 +30,7 @@ const messageTypeToHandler: EventHandlerTuple[] = [
     [isCreateMeme, createMeme],
     [isHelp, generateHelpResponse],
     [isMemeTemplates, generateMemeTemplatesResponse],
-    [isFetchMeme, fetchRedditMeme],
+    [isFetchMeme, fetchMeme],
     [isCurseMessage, generateCurseResponse],
 ];
 
