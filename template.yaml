@@ -32,6 +32,8 @@ Resources:
                     IMAGE_FLIP_USERNAME: '{{resolve:ssm:IMAGE_FLIP_USERNAME:1}}'
                     IMAGE_FLIP_PASSWORD: '{{resolve:ssm:IMAGE_FLIP_PASSWORD:1}}'
                     DYNAMO_TABLE_NAME: !Ref BokuTable
+                    GOOGLE_API_KEY: '{{resolve:ssm:GOOGLE_API_KEY:1}}'
+                    GOOGLE_SEARCH_ENGINE_ID: '{{resolve:ssm:GOOGLE_SEARCH_ENGINE_ID:1}}'
 
 
     BokuBotDepLayer:
