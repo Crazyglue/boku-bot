@@ -1,7 +1,7 @@
-jest.mock('../fetchRedditMeme');
+jest.mock('../fetchMeme/fetchRedditMeme');
 
 import handleEvent from './index';
-import fetchRedditMeme from '../fetchRedditMeme';
+import fetchRedditMeme from '../fetchMeme/fetchRedditMeme';
 
 import sampleMention from '../../test-data/slack/sampleMention.json';
 

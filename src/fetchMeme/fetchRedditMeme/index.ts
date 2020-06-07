@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { SlackAPI } from '../../types/slackTypes';
-import { Reddit } from '../../types/redditTypes';
+import { SlackAPI } from '../../../types/slackTypes';
+import { Reddit } from '../../../types/redditTypes';
+import removeUsers from '../removeUsers';
 
 function fetchMemes(searchString: string) {
     const searchUrl = `https://www.reddit.com/r/dankmemes/search.json?q=${searchString}&sort=top`;
@@ -19,8 +20,7 @@ function images(post: Reddit.RedditPost) {
 }
 
 export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
-    const removedUsers = authedUsers.reduce((finalString, user) => finalString.replace(`<@${user}>`, ''), event.text);
-    const sanitizedMessage = removedUsers.replace('meme', '').trim();
+    const sanitizedMessage = removeUsers(event.text)
 
     const { data: { children: posts = [] } } = await fetchMemes(sanitizedMessage);
 
