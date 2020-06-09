@@ -1,0 +1,41 @@
+{
+  "name": "@boku/action-lambda",
+  "version": "1.0.0",
+  "description": "Used to handle any action performed on a message, such as voting on a meme",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.692.0",
+    "querystring": "^0.2.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@slack/web-api": "^5.7.0",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/aws-lambda": "^8.10.40",
+    "@types/axios": "^0.14.0",
+    "@types/fuzzy-search": "^2.1.0",
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "babel-jest": "^25.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-jest": "^23.6.0",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.1.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  }
+}

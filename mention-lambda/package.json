@@ -1,0 +1,50 @@
+{
+  "name": "@boku/mention-lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.js",
+  "scripts": {
+    "build:ts": "tsc",
+    "build:ts:watch": "tsc -w",
+    "deploy": "npm test && npm run build:ts && npm run sam:build && npm run sam:deploy",
+    "sam:build": "sam package --template-file template.yaml --s3-bucket $(grep BOKU_BOT_S3_BUCKET .env | cut -d '=' -f2) --output-template-file out.yaml",
+    "sam:deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region $(grep AWS_REGION .env | cut -d '=' -f2)",
+    "serve": "./node_modules/.bin/concurrently -n \"TS,SAM\" -c \"green,magenta\" \"npm run build:ts:watch\" \"sam local start-api\"",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.40",
+    "aws-lambda": "^1.0.6",
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "fuzzy-search": "^3.1.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@slack/web-api": "^5.7.0",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/axios": "^0.14.0",
+    "@types/fuzzy-search": "^2.1.0",
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "aws-sdk": "^2.610.0",
+    "babel-jest": "^25.1.0",
+    "concurrently": "^5.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-jest": "^23.6.0",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.1.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  }
+}

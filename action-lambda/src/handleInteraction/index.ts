@@ -1,8 +1,8 @@
 import { Callback } from "aws-lambda";
 
-import { SlackAPI } from "../../types/slackTypes";
+import { SlackAPI } from "../../../types/slackTypes";
 import handleMemeFeedback from './handleMemeFeedback';
-import { MEME_FEEDBACK } from '../constants';
+import { MEME_FEEDBACK } from '../../../common/constants';
 import logger from '../logger';
 
 const INTERACTION_HANDLER_MAP = {

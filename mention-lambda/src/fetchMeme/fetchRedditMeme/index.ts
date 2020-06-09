@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { SlackAPI } from '../../../types/slackTypes';
-import { Reddit } from '../../../types/redditTypes';
+import { SlackAPI } from '../../../../types/slackTypes';
+import { Reddit } from '../../../../types/redditTypes';
 import removeUsers from '../removeUsers';
 
 function fetchMemes(searchString: string) {

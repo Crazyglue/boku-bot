@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk';
 
-import { SlackAPI } from '../../types/slackTypes';
+import { SlackAPI } from '../../../types/slackTypes';
 import logger from '../logger';
 
 const ddb = new AWS.DynamoDB.DocumentClient();

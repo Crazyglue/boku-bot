@@ -1,4 +1,4 @@
-import { SlackAPI } from '../../types/slackTypes';
+import { SlackAPI } from '../../../types/slackTypes';
 
 export default async function generateHelpResponse({ user }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
     const responseText = `<@${user}> You can interact with me in a number of ways:`;

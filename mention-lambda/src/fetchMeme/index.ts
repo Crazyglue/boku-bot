@@ -1,6 +1,6 @@
 import fetchRedditMeme from './fetchRedditMeme'
 import fetchGoogleImagesMeme from './fetchGoogleImagesMeme'
-import { SlackAPI } from '../../types/slackTypes';
+import { SlackAPI } from '../../../types/slackTypes';
 import logger from '../logger';
 
 export default async function fetchMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {

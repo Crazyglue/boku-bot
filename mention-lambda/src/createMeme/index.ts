@@ -1,8 +1,8 @@
 import axios from 'axios';
 import FuzzySearch from 'fuzzy-search';
 
-import { ImageFlip } from './../../types/imageFlipTypes';
-import { SlackAPI } from "./../../types/slackTypes";
+import { ImageFlip } from '../../../types/imageFlipTypes';
+import { SlackAPI } from "../../../types/slackTypes";
 import memeTable from './memeTemplates.json';
 import parseInputText from './parseInputText';
 

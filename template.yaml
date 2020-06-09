@@ -12,7 +12,7 @@ Resources:
     BokuLambda:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: built/src/
+            CodeUri: mention-lambda/built/mention-lambda/src/
             Handler: index.handler
             Layers:
               - !Ref BokuBotDepLayer
@@ -38,6 +38,25 @@ Resources:
                     GOOGLE_API_KEY: '{{resolve:ssm:GOOGLE_API_KEY:1}}'
                     GOOGLE_SEARCH_ENGINE_ID: '{{resolve:ssm:GOOGLE_SEARCH_ENGINE_ID:1}}'
 
+    BokuActionLambda:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: action-lambda/built/action-lambda/src
+            Handler: index.handler
+            Layers:
+                - !Ref BokuBotDepLayer
+            Events:
+                BokuAPI:
+                    Type: Api
+                    Properties:
+                        Path: /action
+                        Method: any
+            Policies:
+                - DynamoDBCrudPolicy:
+                    TableName: !Ref BokuMemeFeedbackTable
+            Environment:
+                Variables:
+                    BOKU_MEME_FEEDBACK_TABLE: !Ref BokuMemeFeedbackTable
 
     BokuBotDepLayer:
         Type: AWS::Serverless::LayerVersion
