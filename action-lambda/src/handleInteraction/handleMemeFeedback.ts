@@ -8,7 +8,7 @@ const tableName = process.env.BOKU_MEME_FEEDBACK_TABLE;
 
 const linkRegex = /\<(.+)\>/g;
 
-export default async function handleMemeFeedback(event: SlackAPI.Event): Promise<void> {
+export default async function handleMemeFeedback(event: SlackAPI.ActionEvent): Promise<void> {
     const log = logger.child({ function: 'handleMemeFeedback', event });
 
     log.info('Handling meme feedback...')

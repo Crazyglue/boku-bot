@@ -13,7 +13,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context, cal
     log.info('Cannot parse json, must be an interaction')
     const decoded: any = qs.decode(event.body);
     log.info('Decoded some data', { decoded });
-    const parsedData: SlackAPI.Event = JSON.parse(decoded.payload);
+    const parsedData: SlackAPI.ActionEvent = JSON.parse(decoded.payload);
     log.info('Parsed some data', { parsedData });
 
     await handleInteraction(parsedData, callback);
