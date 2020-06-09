@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { SlackAPI } from '../../../../types/slackTypes';
+import { Google } from '../../../../types/googleTypes';
 import logger from '../../logger';
 import removeUsers from '../removeUsers';
 import { MEME_FEEDBACK } from '../../constants';
+import fetchFeedback, { FeedbackMap } from './fetchFeedback';
 
 const { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } = process.env;
 
@@ -28,8 +30,8 @@ const FEEDBACK_ATTACHMENT = {
     ]
 }
 
-async function fetchMemes(searchString: string) {
-    const res = await axios.get('https://customsearch.googleapis.com/customsearch/v1', {
+async function fetchMemes(searchString: string): Promise<Google.SearchResultItem[]> {
+    const res: Google.SearchResult = await axios.get('https://customsearch.googleapis.com/customsearch/v1', {
         params: {
             key: GOOGLE_API_KEY,
             q: searchString,
@@ -39,6 +41,13 @@ async function fetchMemes(searchString: string) {
     })
 
     return res.data.items;
+}
+
+function selectMeme(memes: Google.SearchResultItem[], memeFeedback: FeedbackMap): Google.SearchResultItem {
+    const randomIndex = Math.floor(Math.random() * memes.length);
+    const selectedMeme = memes[randomIndex];
+
+    return selectedMeme;
 }
 
 export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
@@ -53,8 +62,13 @@ export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authe
         throw new Error('No memes found from google');
     }
 
-    const randomIndex = Math.floor(Math.random() * memes.length);
-    const selectedMeme = memes[randomIndex];
+    // log.info('Found memes', { memes })
+
+    const memeFeedback = await fetchFeedback();
+
+    log.info('Found feedback', { memeFeedback })
+
+    const selectedMeme = selectMeme(memes, memeFeedback);
 
     log.info(`selectedMeme: ${selectedMeme}`)
 
