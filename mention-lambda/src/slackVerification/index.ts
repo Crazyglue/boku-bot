@@ -1,6 +1,6 @@
 import { Callback } from "aws-lambda";
 
-import { SlackAPI } from '../../types/slackTypes';
+import { SlackAPI } from '../../../types/slackTypes';
 import { DEFAULT_200_RESPONSE } from '../constants';
 
 const { SLACK_VERIFICATION_TOKEN } = process.env;

@@ -3,7 +3,7 @@ jest.mock('../fetchMeme/fetchRedditMeme');
 import handleEvent from './index';
 import fetchRedditMeme from '../fetchMeme/fetchRedditMeme';
 
-import sampleMention from '../../test-data/slack/sampleMention.json';
+import sampleMention from '../../../test-data/slack/sampleMention.json';
 
 describe('handleEvent', () => {
     const MOCK_IMAGE_NAME = 'foo-bar';

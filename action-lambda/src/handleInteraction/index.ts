@@ -1,6 +1,6 @@
 import { Callback } from "aws-lambda";
 
-import { SlackAPI } from "../../types/slackTypes";
+import { SlackAPI } from "../../../types/slackTypes";
 import handleMemeFeedback from './handleMemeFeedback';
 import { MEME_FEEDBACK } from '../constants';
 import logger from '../logger';
@@ -16,7 +16,7 @@ export default async function handleInteraction(event: SlackAPI.Event, callback:
     log.info(`Found function: ${handlerFunction}`);
 
     if (handlerFunction) {
-        handlerFunction(event);
+        await handlerFunction(event);
     } else {
         log.info(`Function for event ${event.callback_id} not found, not handling interaction.`)
     }
