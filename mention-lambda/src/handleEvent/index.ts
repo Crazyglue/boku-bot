@@ -2,7 +2,7 @@ import { Callback } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 
 import { SlackAPI } from '../../../types/slackTypes';
-import { DEFAULT_200_RESPONSE } from '../../../common/constants';
+import { DEFAULT_200_RESPONSE } from '../constants';
 import fetchMeme from '../fetchMeme';
 import createMeme from '../createMeme';
 import sendSlackMessage from '../sendSlackMessage';

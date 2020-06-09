@@ -2,7 +2,7 @@ import axios from 'axios';
 import { SlackAPI } from '../../../../types/slackTypes';
 import logger from '../../logger';
 import removeUsers from '../removeUsers';
-import { MEME_FEEDBACK } from '../../../../common/constants';
+import { MEME_FEEDBACK } from '../../constants';
 
 const { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } = process.env;
 

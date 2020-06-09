@@ -16,5 +16,5 @@ export async function handler(event: APIGatewayProxyEvent, context: Context, cal
     const parsedData: SlackAPI.Event = JSON.parse(decoded.payload);
     log.info('Parsed some data', { parsedData });
 
-    handleInteraction(parsedData, callback);
+    await handleInteraction(parsedData, callback);
 }
