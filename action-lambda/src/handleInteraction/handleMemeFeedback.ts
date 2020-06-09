@@ -13,7 +13,7 @@ export default async function handleMemeFeedback(event: SlackAPI.Event): Promise
 
     log.info('Handling meme feedback...')
 
-    const [ website ] = event.original_message.text.match(linkRegex)
+    const [ website ] = event.original_message.text.match(linkRegex);
     const feedback = event.actions[0].value == 'good' ? 1 : -1
 
     const imageUrl = event.original_message.attachments[0].image_url;
@@ -35,7 +35,9 @@ export default async function handleMemeFeedback(event: SlackAPI.Event): Promise
         return;
     }
 
-    log.info('Setting feedback', { website, feedback })
+    const [ trimmedWebsite ] = website.replace('<', '').replace('>', '').split('|')
+
+    log.info('Setting feedback', { website: trimmedWebsite, feedback })
 
     await ddb.put({
         TableName: tableName,
@@ -43,7 +45,7 @@ export default async function handleMemeFeedback(event: SlackAPI.Event): Promise
             TriggerId: event.trigger_id,
             UserId: event.user.id,
             UserName: event.user.name,
-            Website: website,
+            Website: trimmedWebsite,
             Feedback: feedback,
             ImageUrl: event.original_message.attachments[0].image_url
         }
