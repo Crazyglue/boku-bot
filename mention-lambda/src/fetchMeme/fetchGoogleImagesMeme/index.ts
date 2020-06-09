@@ -15,13 +15,13 @@ const FEEDBACK_ATTACHMENT = {
     "actions": [
         {
             "name": "feedback",
-            "text": ":thumbsup:",
+            "text": ":partydank:",
             "type": "button",
             "value": MEME_FEEDBACK.positiveResponse
         },
         {
             "name": "feedback",
-            "text": ":thumbsdown:",
+            "text": ":poopmove:",
             "type": "button",
             "value": MEME_FEEDBACK.negativeResponse
         }
