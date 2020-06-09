@@ -9,7 +9,7 @@ const INTERACTION_HANDLER_MAP = {
     [MEME_FEEDBACK.callbackId]: handleMemeFeedback
 }
 
-export default async function handleInteraction({ event }: SlackAPI.SlackEventPayload, callback: Callback) {
+export default async function handleInteraction(event: SlackAPI.Event, callback: Callback) {
     const log = logger.child({ function: 'handleInteraction' })
     const handlerFunction = INTERACTION_HANDLER_MAP[event.callback_id]
 

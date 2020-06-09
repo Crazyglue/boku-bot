@@ -31,7 +31,10 @@ export declare module SlackAPI {
         client_msg_id: string;
         type: string;
         text: string;
-        user: string;
+        user: {
+            id: string;
+            name: string;
+        };
         ts: string;
         team: string;
         edited: Edited;
@@ -39,6 +42,10 @@ export declare module SlackAPI {
         channel: string;
         event_ts: string;
         callback_id?: string;
+        trigger_id?: string;
+        actions?: Action[];
+        original_message?: Event;
+        attachments?: SlackPostAttachment[];
     }
 
     export interface SlackEventPayload {
