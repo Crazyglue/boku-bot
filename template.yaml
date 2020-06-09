@@ -25,6 +25,8 @@ Resources:
             Policies:
                 - DynamoDBCrudPolicy:
                     TableName: !Ref BokuTable
+                - DynamoDBCrudPolicy:
+                    TableName: !Ref BokuMemeFeedbackTable
             Environment:
                 Variables:
                     SLACK_ACCESS_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_ACCESS_TOKEN:1}}'
@@ -32,6 +34,7 @@ Resources:
                     IMAGE_FLIP_USERNAME: '{{resolve:ssm:IMAGE_FLIP_USERNAME:1}}'
                     IMAGE_FLIP_PASSWORD: '{{resolve:ssm:IMAGE_FLIP_PASSWORD:1}}'
                     DYNAMO_TABLE_NAME: !Ref BokuTable
+                    BOKU_MEME_FEEDBACK_TABLE: !Ref BokuMemeFeedbackTable
                     GOOGLE_API_KEY: '{{resolve:ssm:GOOGLE_API_KEY:1}}'
                     GOOGLE_SEARCH_ENGINE_ID: '{{resolve:ssm:GOOGLE_SEARCH_ENGINE_ID:1}}'
 
@@ -59,6 +62,32 @@ Resources:
             TableName: BokuRequestsTable
             Tags:
                 Name: BokuTable
+
+    BokuMemeFeedbackTable:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            KeySchema:
+                -
+                    AttributeName: UserId
+                    KeyType: HASH
+                -
+                    AttributeName: ImageUrl
+                    KeyType: RANGE
+            AttributeDefinitions:
+                -
+                    AttributeName: ImageUrl
+                    AttributeType: S
+                -
+                    AttributeName: UserId
+                    AttributeType: S
+            ProvisionedThroughput:
+                ReadCapacityUnits: 10
+                WriteCapacityUnits: 10
+            TableName: BokuMemeFeedback
+            Tags:
+                -
+                    Key: Name
+                    Value: BokuMemeFeedbackTable
 
 Outputs:
     ApiURL:

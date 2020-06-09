@@ -31,13 +31,21 @@ export declare module SlackAPI {
         client_msg_id: string;
         type: string;
         text: string;
-        user: string;
+        user: {
+            id: string;
+            name: string;
+        };
         ts: string;
         team: string;
         edited: Edited;
         blocks: Block[];
         channel: string;
         event_ts: string;
+        callback_id?: string;
+        trigger_id?: string;
+        actions?: Action[];
+        original_message?: Event;
+        attachments?: SlackPostAttachment[];
     }
 
     export interface SlackEventPayload {
@@ -58,10 +66,22 @@ export declare module SlackAPI {
         text?: string;
     }
 
+    export interface Action {
+        name: string;
+        text: string;
+        type: string;
+        value: string;
+    }
+
     export interface SlackPostAttachment {
         title?: string;
         image_url?: string;
         blocks?: Block[];
+        fallback?: string;
+        callback_id?: string;
+        color?: string;
+        attachment_type?: string;
+        actions?: Action[];
     }
 }
 
