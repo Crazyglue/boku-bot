@@ -4,7 +4,8 @@ import { Google } from '../../../../types/googleTypes';
 import logger from '../../logger';
 import removeUsers from '../removeUsers';
 import { MEME_FEEDBACK } from '../../constants';
-import fetchFeedback, { FeedbackMap } from './fetchFeedback';
+import fetchFeedback from './fetchFeedback';
+import selectMeme from './selectMeme';
 
 const { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } = process.env;
 
@@ -43,13 +44,6 @@ async function fetchMemes(searchString: string): Promise<Google.SearchResultItem
     return res.data.items;
 }
 
-function selectMeme(memes: Google.SearchResultItem[], memeFeedback: FeedbackMap): Google.SearchResultItem {
-    const randomIndex = Math.floor(Math.random() * memes.length);
-    const selectedMeme = memes[randomIndex];
-
-    return selectedMeme;
-}
-
 export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
     const log = logger.child({ event, authedUsers, function: 'fetchGoogleImagesMeme' });
     const sanitizedMessage = removeUsers(event.text)
@@ -61,8 +55,6 @@ export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authe
         log.error('No memes found using google search');
         throw new Error('No memes found from google');
     }
-
-    // log.info('Found memes', { memes })
 
     const memeFeedback = await fetchFeedback();
 
