@@ -116,17 +116,17 @@ export declare module SlackAPI {
     }
 
     export interface Attachment {
-        fallback: string;
-        image_url: string;
-        image_width: number;
-        image_height: number;
-        image_bytes: number;
-        title: string;
-        id: number;
-        callback_id: string;
+        fallback?: string;
+        image_url?: string;
+        image_width?: number;
+        image_height?: number;
+        image_bytes?: number;
+        title?: string;
+        id?: number;
+        callback_id?: string;
         text: string;
-        color: string;
-        actions: Action[];
+        color?: string;
+        actions?: Action[];
     }
 
     export interface OriginalMessage {

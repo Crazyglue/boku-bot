@@ -60,7 +60,7 @@ export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authe
 
     log.info('Found feedback', { memeFeedback })
 
-    const selectedMeme = selectMeme(memes, memeFeedback);
+    const { selectedMeme, probability } = selectMeme(memes, memeFeedback);
 
     log.info(`selectedMeme: ${selectedMeme}`)
 
@@ -69,7 +69,7 @@ export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authe
         throw new Error('Meme doesnt have a link');
     }
 
-    const text = `Heres a :partydank: meme from ${selectedMeme.displayLink}`
+    const text = `Heres a :partydank: meme from ${selectedMeme.displayLink}\nChance of this meme being selected: ${Math.round(probability * 100)}%`
     const attachments = [
         { title: selectedMeme.title, image_url: selectedMeme.link },
         FEEDBACK_ATTACHMENT

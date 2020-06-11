@@ -6,15 +6,22 @@ import logger from './logger';
 import handleInteraction from './handleInteraction';
 
 export async function handler(event: APIGatewayProxyEvent, context: Context, callback: Callback) {
-    const log = logger.child({ functionName: 'handler' });
+    const log = logger.child({ functionName: 'handler', event });
 
     // Must be an interaction
     // TODO: split lambda into two, one for interaction, one for events
-    log.info('Cannot parse json, must be an interaction')
+    log.info('Handling interaction')
     const decoded: any = qs.decode(event.body);
     log.info('Decoded some data', { decoded });
     const parsedData: SlackAPI.ActionEvent = JSON.parse(decoded.payload);
     log.info('Parsed some data', { parsedData });
 
-    await handleInteraction(parsedData, callback);
+    const result = await handleInteraction(parsedData);
+
+    return {
+        statusCode: 200,
+        isBase64Encoded: false,
+        headers: {},
+        body: JSON.stringify(result)
+    }
 }
