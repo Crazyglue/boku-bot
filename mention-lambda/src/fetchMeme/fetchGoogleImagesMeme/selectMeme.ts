@@ -2,41 +2,6 @@ import { Google } from '../../../../types/googleTypes';
 import { FeedbackMap } from './fetchFeedback';
 import logger from '../../logger';
 
-function logisticboi(x: number, averageScore: number, sumOfScores?: number) {
-    const kValue = sumOfScores ? 1 / sumOfScores : 1; // scaling factor
-    return 1 / (1 + Math.exp(-kValue * (x - averageScore)));
-}
-
-function getRandom(weights: Website[]): ProbableWebsite {
-    const log = logger.child({ functionName: 'getRandom' })
-
-    const sumScore = weights.reduce((total, { weight }) => total + weight, 0)
-    const averageScore = sumScore / weights.length;
-
-    log.info('Computed probability factors', { averageScore, sumScore });
-
-    const probabilities = weights.map(({ domain, weight }) => ({
-        domain,
-        weight,
-        probability: logisticboi(weight, averageScore, sumScore)
-    })).sort((a, b) => b.probability - a.probability); // descending
-
-    const sum = probabilities.reduce((total, website) => total + website.probability, 0);
-
-    let runningTotal = 0;
-    const probSums = probabilities.map(({ probability }) => (runningTotal += probability));
-    const random = Math.random() * sum;
-    const index = probSums.filter(sum => sum <= random).length
-    const selectedWebsite = probabilities[index];
-
-    log.info('Found the probabilties of each website', { probabilities, selectedWebsite, sum, random, index, probSums })
-
-    return {
-        ...selectedWebsite,
-        probability: selectedWebsite.probability / sum
-    };
-}
-
 interface Website {
     domain: string;
     weight: number;
@@ -49,6 +14,58 @@ interface ProbableWebsite extends Website {
 interface SelectedMemeDto {
     selectedMeme: Google.SearchResultItem;
     probability: number;
+}
+
+function sum(numbers: number[]): number {
+    return numbers.reduce((t, n) => t + n, 0);
+}
+
+function mapValue(arr: any[], key: string) {
+    return arr.map(v => v[key]);
+}
+
+function standardDeviation(weights: number[]): number {
+    const mean = sum(weights) / weights.length;
+
+    const squared = weights.map(weight => Math.pow(weight - mean, 2));
+    const stdDev = Math.sqrt(sum(squared) / squared.length);
+
+    return stdDev;
+}
+
+function logisticboi(x: number, averageScore: number, kValue: number = 1) {
+    return 1 / (1 + Math.exp(-kValue * (x - averageScore)));
+}
+
+function getRandom(weights: Website[]): ProbableWebsite {
+    const log = logger.child({ functionName: 'getRandom' })
+
+    const sumScore = sum(mapValue(weights, 'weight'));
+    const averageScore = sumScore / weights.length;
+    const stdDev = standardDeviation(weights.map(({ weight }) => weight))
+
+    log.info('Computed probability factors', { averageScore, sumScore, stdDev });
+
+    const probabilities = weights.map(({ domain, weight }) => ({
+        domain,
+        weight,
+        probability: logisticboi(weight, averageScore, stdDev)
+    })).sort((a, b) => b.probability - a.probability); // descending
+
+    const sumProbabilities = sum(mapValue(probabilities, 'probability'));
+
+    let runningTotal = 0;
+    const probSums = probabilities.map(({ probability }) => (runningTotal += probability));
+    const random = Math.random() * sumProbabilities;
+    const index = probSums.filter(sum => sum <= random).length
+    const selectedWebsite = probabilities[index];
+
+    log.info('Found the probabilties of each website', { probabilities, selectedWebsite, sum, random, index, probSums })
+
+    return {
+        ...selectedWebsite,
+        probability: selectedWebsite.probability / sumProbabilities
+    };
 }
 
 export default function selectMeme(memes: Google.SearchResultItem[], memeFeedback: FeedbackMap): SelectedMemeDto {
