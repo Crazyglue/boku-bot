@@ -49,7 +49,7 @@ function getRandom(weights: Website[]): ProbableWebsite {
     const probabilities = weights.map(({ domain, weight }) => ({
         domain,
         weight,
-        probability: logisticboi(weight, averageScore, stdDev)
+        probability: logisticboi(weight, averageScore, 1 / stdDev)
     })).sort((a, b) => b.probability - a.probability); // descending
 
     const sumProbabilities = sum(mapValue(probabilities, 'probability'));
