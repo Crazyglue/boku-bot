@@ -43,10 +43,10 @@ const mock_memes = [
     },
 ];
 
-const mock_feedback =  {
-    "http://www.reddit.com": 10,
-    "http://www.pinterest.com": 4,
-};
+const mock_feedback =  [
+    { domain: "http://www.reddit.com", score: 10, imgCount: 3, averageImageScore: 3 },
+    { domain: "http://www.pinterest.com", score: 4, imgCount: 1, averageImageScore: 4 },
+];
 
 
 describe('selectMeme', () => {

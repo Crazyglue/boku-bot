@@ -10,10 +10,17 @@ interface FeedbackRow {
 }
 
 export interface FeedbackMap {
-    [key: string]: number;
+    [key: string]: WebsiteFeedback;
 }
 
-export default async function fetchFeedback(): Promise<FeedbackMap> {
+export interface WebsiteFeedback {
+    domain: string;
+    score: number;
+    imgCount: number;
+    averageImageScore: number;
+}
+
+export default async function fetchFeedback(): Promise<WebsiteFeedback[]> {
     const log = logger.child({ functionName: 'fetchFeedback' })
     log.info('Fetching feedback...')
     const allFeedback = await ddb.scan({
@@ -21,18 +28,25 @@ export default async function fetchFeedback(): Promise<FeedbackMap> {
     }).promise()
 
     const items = allFeedback.Items;
-    // log.info('Found items', { items });
 
-    const domainFeedbackMap = items.reduce((map, item: FeedbackRow) => {
+    // Iterate over all items, and add up feedback, calculate average, count images.
+    const domainFeedbackMap: FeedbackMap = items.reduce((map, item: FeedbackRow) => {
         if (map[item.Website]) {
-            map[item.Website] += item.Feedback;
+            map[item.Website].score += item.Feedback;
+            map[item.Website].imgCount += 1;
+            map[item.Website].averageImageScore = map[item.Website].score / map[item.Website].imgCount;
         } else {
-            map[item.Website] = item.Feedback;
+            map[item.Website] = {
+                domain: item.Website,
+                score: item.Feedback,
+                imgCount: 1,
+                averageImageScore: item.Feedback
+            };
         }
-        return map
-    }, {})
+        return map;
+    }, {});
 
     log.info('Found feedback and mapped feedback')
 
-    return domainFeedbackMap;
+    return Object.values(domainFeedbackMap);
 }

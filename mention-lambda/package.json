@@ -31,6 +31,7 @@
     "@types/aws-sdk": "^2.7.0",
     "@types/axios": "^0.14.0",
     "@types/fuzzy-search": "^2.1.0",
+    "@types/jest": "^26.0.0",
     "@types/node": "^13.7.0",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
