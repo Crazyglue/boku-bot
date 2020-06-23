@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 import { APIGatewayProxyEvent, Context, Callback } from 'aws-lambda';
-import qs from 'querystring';
+import { DEFAULT_200_RESPONSE } from './constants';
 
 import slackVerification from './slackVerification';
 import handleEvent from './handleEvent'
@@ -21,6 +21,11 @@ const eventToHandler: EventHandlerMap = {
 // Lambda handler
 exports.handler = (data: APIGatewayProxyEvent, context: Context, callback: Callback) => {
     const log = logger.child({ functionName: 'handler' });
+    log.info('event')
+    if (data.headers['x-slack-retry-num']) {
+        log.info('Slack is retrying. Returning a default response to get it to stop.')
+        callback(null, DEFAULT_200_RESPONSE)
+    }
     log.info(data.body);
     const parsedData: SlackAPI.SlackEventPayload = JSON.parse(data.body);
 
