@@ -9,7 +9,7 @@ Globals:
         AutoPublishAlias: Latest
 
 Resources:
-    BokuLambda:
+    BokuMentionLambda:
         Type: AWS::Serverless::Function
         Properties:
             CodeUri: mention-lambda/built/mention-lambda/src/
