@@ -8,6 +8,7 @@ import createMeme from '../createMeme';
 import sendSlackMessage from '../sendSlackMessage';
 import generateHelpResponse from '../commands/generateHelpResponse';
 import generateMemeTemplatesResponse from '../commands/generateMemeTemplatesResponse';
+import logger from '../logger';
 
 // Check functions
 const isCreateMeme = (eventText = ''): boolean => eventText.includes('!create');
@@ -38,8 +39,9 @@ const tableName = process.env.DYNAMO_TABLE_NAME;
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
-/* eslint-disable no-console */
 export default async function handleEvent({ event, authed_users = [], ...restProps }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
+    const log = logger.child({ functionName: 'handleEvent' })
+    log.info('Responding to slack to get it to shut up')
     // response to slack acknowledging the event was received
     callback(null, DEFAULT_200_RESPONSE);
 
@@ -68,10 +70,9 @@ export default async function handleEvent({ event, authed_users = [], ...restPro
             }
         }).promise()
     } catch (e) {
-        console.log('cannot save transaction');
+        log.info('Cannot save transaction', { error: e });
     }
 
-    console.log('Sending slack message: ', message);
+    log.info('Sending slack message: ', { slackMessage: message });
     sendSlackMessage(message, channel);
-
 };

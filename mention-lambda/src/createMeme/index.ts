@@ -5,6 +5,7 @@ import { ImageFlip } from '../../../types/imageFlipTypes';
 import { SlackAPI } from "../../../types/slackTypes";
 import memeTable from './memeTemplates.json';
 import parseInputText from './parseInputText';
+import logger from '../logger';
 
 const { IMAGE_FLIP_USERNAME, IMAGE_FLIP_PASSWORD } = process.env;
 
@@ -15,7 +16,9 @@ const searcher = new FuzzySearch<ImageFlip.ImageFlipMemeTemplate>(memeTable, ['n
 export const ERROR_MESSAGE = { text: ':ohno: Something went wrong :ohno:' };
 
 export default async function createMeme({ text = '' }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
+    const log = logger.child({ functionName: 'createMeme' })
     if (!text || text.length === 0) {
+        log.info('No text, cannot create meme.')
         return ERROR_MESSAGE;
     }
 
@@ -34,7 +37,7 @@ export default async function createMeme({ text = '' }: SlackAPI.Event): Promise
         [`boxes[${index}][text]`]: snippet,
     }), {});
 
-    console.log('TCL: boxes', boxes);
+    log.info('Sending boxes to ImageFlip', { boxes });
 
     const imageFlipParams: ImageFlip.ImageFlipCreateParams = {
         template_id: template.id,
@@ -60,5 +63,7 @@ export default async function createMeme({ text = '' }: SlackAPI.Event): Promise
             attachments,
         };
     }
+
+    log.info('Response from ImageFlip wasnt successful', { response });
     return ERROR_MESSAGE;
 };
