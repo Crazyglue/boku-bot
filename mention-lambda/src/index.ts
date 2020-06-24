@@ -21,7 +21,10 @@ const eventToHandler: EventHandlerMap = {
 // Lambda handler
 exports.handler = (data: APIGatewayProxyEvent, context: Context, callback: Callback) => {
     const log = logger.child({ functionName: 'handler' });
-    log.info('event')
+    log.info('Received event', {
+        requestContext: data.requestContext,
+        context: context
+    })
     if (data.headers['x-slack-retry-num']) {
         log.info('Slack is retrying. Returning a default response to get it to stop.')
         callback(null, DEFAULT_200_RESPONSE)

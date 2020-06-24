@@ -9,7 +9,7 @@
     "deploy": "npm test && npm run build:ts && npm run sam:build && npm run sam:deploy",
     "sam:build": "sam package --template-file template.yaml --s3-bucket $(grep BOKU_BOT_S3_BUCKET .env | cut -d '=' -f2) --output-template-file out.yaml",
     "sam:deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region $(grep AWS_REGION .env | cut -d '=' -f2)",
-    "test": "./node_modules/.bin/concurrently -n \"action,mention\" -c \"green,magenta\" \"cd action-lambda && npm run test\" \"cd mention-lambda && npm run test\""
+    "test": "./node_modules/.bin/concurrently -n \"action,mention\" -c \"green,magenta\" \"cd action-lambda && NODE_ENV=test npm run test\" \"cd mention-lambda && NODE_ENV=test npm run test\""
   },
   "repository": {
     "type": "git",

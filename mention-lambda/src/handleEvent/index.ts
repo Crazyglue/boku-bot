@@ -22,9 +22,7 @@ const generateCurseResponse = async (event: SlackAPI.Event): Promise<SlackAPI.Sl
 const generateDefaultResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> I AM ALIIIIIIIIIVE` });
 
 type CheckFunction = (event: string) => boolean;
-
-type EventHandler = (event: SlackAPI.Event, authed_users?: string[]) => Promise<SlackAPI.SlackPost>;
-
+type EventHandler = (event: SlackAPI.Event) => Promise<SlackAPI.SlackPost>;
 type EventHandlerTuple = [CheckFunction, EventHandler];
 
 const messageTypeToHandler: EventHandlerTuple[] = [
@@ -39,7 +37,7 @@ const tableName = process.env.DYNAMO_TABLE_NAME;
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
-export default async function handleEvent({ event, authed_users = [], ...restProps }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
+export default async function handleEvent({ event, ...restProps }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
     const log = logger.child({ functionName: 'handleEvent' })
     log.info('Responding to slack to get it to shut up')
     // response to slack acknowledging the event was received
@@ -52,7 +50,7 @@ export default async function handleEvent({ event, authed_users = [], ...restPro
     let message;
 
     if (eventHandler) {
-        message = await eventHandler(event, authed_users);
+        message = await eventHandler(event);
     } else {
         message = await generateDefaultResponse(event);
     }
