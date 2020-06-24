@@ -27,6 +27,8 @@ Resources:
                     TableName: !Ref BokuTable
                 - DynamoDBCrudPolicy:
                     TableName: !Ref BokuMemeFeedbackTable
+            EventInvokeConfig:
+                 MaximumRetryAttempts: 0
             Environment:
                 Variables:
                     SLACK_ACCESS_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_ACCESS_TOKEN:1}}'
