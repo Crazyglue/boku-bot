@@ -25,11 +25,13 @@ exports.handler = (data: APIGatewayProxyEvent, context: Context, callback: Callb
         requestContext: data.requestContext,
         context: context
     })
+
     if (data.headers['x-slack-retry-num']) {
         log.info('Slack is retrying. Returning a default response to get it to stop.')
         callback(null, DEFAULT_200_RESPONSE)
+        return
     }
-    log.info(data.body);
+
     const parsedData: SlackAPI.SlackEventPayload = JSON.parse(data.body);
 
     log.info({ parsedData });
