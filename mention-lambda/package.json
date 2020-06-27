@@ -19,6 +19,7 @@
     "@types/aws-lambda": "^8.10.40",
     "aws-lambda": "^1.0.6",
     "axios": "^0.19.2",
+    "deepai": "^1.0.15",
     "dotenv": "^8.2.0",
     "fuzzy-search": "^3.1.0",
     "winston": "^3.2.1"

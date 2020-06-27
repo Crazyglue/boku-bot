@@ -1,4 +1,5 @@
 jest.mock('../fetchMeme/fetchRedditMeme');
+jest.mock('../createTextResponse')
 
 import handleEvent from './index';
 import fetchRedditMeme from '../fetchMeme/fetchRedditMeme';

@@ -12,3 +12,4 @@ Used to handle any time boku is mentioned, for example `@boku show me a dank mem
 * BOKU_MEME_FEEDBACK_TABLE
 * GOOGLE_API_KEY
 * GOOGLE_SEARCH_ENGINE_ID
+* DEEP_AI_API_KEY

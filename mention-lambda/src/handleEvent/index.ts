@@ -9,6 +9,7 @@ import sendSlackMessage from '../sendSlackMessage';
 import generateHelpResponse from '../commands/generateHelpResponse';
 import generateMemeTemplatesResponse from '../commands/generateMemeTemplatesResponse';
 import logger from '../logger';
+import createTextResponse from '../createTextResponse';
 
 // Check functions
 const isCreateMeme = (eventText = ''): boolean => eventText.includes('!create');
@@ -52,7 +53,11 @@ export default async function handleEvent({ event, ...restProps }: SlackAPI.Slac
     if (eventHandler) {
         message = await eventHandler(event);
     } else {
-        message = await generateDefaultResponse(event);
+        try {
+            message = { text: await createTextResponse(event.text), attachments: [] };
+        } catch(e) {
+            message = await generateDefaultResponse(event);
+        }
     }
 
     try {
