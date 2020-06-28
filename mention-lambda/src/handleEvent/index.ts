@@ -9,9 +9,11 @@ import generateHelpResponse from '../commands/generateHelpResponse';
 import generateMemeTemplatesResponse from '../commands/generateMemeTemplatesResponse';
 import logger from '../logger';
 import createTextResponse from '../createTextResponse';
+import { generateAiMeme } from '../generateAiMeme';
 
 // Check functions
 const isCreateMeme = (eventText = ''): boolean => eventText.includes('!create');
+const isGenerateAiMeme = (eventText = ''): boolean => eventText.includes('!generate');
 const isHelp = (eventText = ''): boolean => eventText.includes('!help');
 const isMemeTemplates = (eventText = ''): boolean => eventText.includes('!template');
 const isFetchMeme = (eventText = ''): boolean => eventText.toLowerCase().includes('meme');
@@ -27,6 +29,7 @@ type EventHandlerTuple = [CheckFunction, EventHandler];
 
 const messageTypeToHandler: EventHandlerTuple[] = [
     [isCreateMeme, createMeme],
+    [isGenerateAiMeme, generateAiMeme],
     [isHelp, generateHelpResponse],
     [isMemeTemplates, generateMemeTemplatesResponse],
     [isFetchMeme, fetchMeme],

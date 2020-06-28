@@ -1,13 +1,11 @@
-import axios from 'axios';
 import FuzzySearch from 'fuzzy-search';
 
+import { postMemeToImageFlip } from '../api';
 import { ImageFlip } from '../../../types/imageFlipTypes';
 import { SlackAPI } from "../../../types/slackTypes";
 import memeTable from './memeTemplates.json';
 import parseInputText from './parseInputText';
 import logger from '../logger';
-
-const { IMAGE_FLIP_USERNAME, IMAGE_FLIP_PASSWORD } = process.env;
 
 const searcher = new FuzzySearch<ImageFlip.ImageFlipMemeTemplate>(memeTable, ['name'], {
     caseSensitive: false,
@@ -32,25 +30,7 @@ export default async function createMeme({ text = '' }: SlackAPI.Event): Promise
         }
     }
 
-    const boxes: ImageFlip.ImageFlipBox = textValues.reduce((acc, snippet, index) => ({
-        ...acc,
-        [`boxes[${index}][text]`]: snippet,
-    }), {});
-
-    log.info('Sending boxes to ImageFlip', { boxes });
-
-    const imageFlipParams: ImageFlip.ImageFlipCreateParams = {
-        template_id: template.id,
-        username: IMAGE_FLIP_USERNAME,
-        password: IMAGE_FLIP_PASSWORD,
-        ...boxes,
-    }
-
-    const response = await axios.request<ImageFlip.ImageFlipResponse>({
-        url: 'https://api.imgflip.com/caption_image',
-        method: 'post',
-        params: imageFlipParams,
-    }).then(res => res.data);
+    const response = await postMemeToImageFlip(template, textValues);
 
     if (response.success) {
         const successText = `Heres your :partydank: meme`;
