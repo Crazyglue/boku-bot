@@ -4,9 +4,11 @@ Description: BokuBot
 Globals:
     Function:
         MemorySize: 512
-        Timeout: 120
+        Timeout: 300
         Runtime: nodejs12.x
         AutoPublishAlias: Latest
+        EventInvokeConfig:
+             MaximumRetryAttempts: 0
 
 Resources:
     BokuMentionLambda:
@@ -27,8 +29,6 @@ Resources:
                     TableName: !Ref BokuTable
                 - DynamoDBCrudPolicy:
                     TableName: !Ref BokuMemeFeedbackTable
-            EventInvokeConfig:
-                 MaximumRetryAttempts: 0
             Environment:
                 Variables:
                     SLACK_ACCESS_TOKEN: '{{resolve:ssm:BOKU_BOT_SLACK_ACCESS_TOKEN:1}}'

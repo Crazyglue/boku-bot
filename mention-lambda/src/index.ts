@@ -23,12 +23,15 @@ exports.handler = (data: APIGatewayProxyEvent, context: Context, callback: Callb
     const log = logger.child({ functionName: 'handler' });
     log.info('Received event', {
         requestContext: data.requestContext,
-        context: context
+        context: context,
+        headers: data.headers,
     })
 
-    if (data.headers['x-slack-retry-num']) {
-        log.info('Slack is retrying. Returning a default response to get it to stop.')
-        callback(null, DEFAULT_200_RESPONSE)
+    log.info('Responding with default response so slack doesn\'t call again', { DEFAULT_200_RESPONSE });
+    callback(null, DEFAULT_200_RESPONSE)
+
+    if (data.headers['X-Slack-Retry-Num']) {
+        log.info('Slack is retrying. Returning.')
         return
     }
 

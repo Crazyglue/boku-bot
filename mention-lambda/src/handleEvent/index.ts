@@ -2,7 +2,6 @@ import { Callback } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 
 import { SlackAPI } from '../../../types/slackTypes';
-import { DEFAULT_200_RESPONSE } from '../constants';
 import fetchMeme from '../fetchMeme';
 import createMeme from '../createMeme';
 import sendSlackMessage from '../sendSlackMessage';
@@ -20,7 +19,7 @@ const isCurseMessage = (eventText = ''): boolean => /(fuck|ass|bitch|shit|dick|b
 
 // Response functions (that are one-liners)
 const generateCurseResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> thats very rude, why would you say that?` });
-const generateDefaultResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> I AM ALIIIIIIIIIVE` });
+const generateDefaultResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> I tried to think of a response, but I'm too dumb.` });
 
 type CheckFunction = (event: string) => boolean;
 type EventHandler = (event: SlackAPI.Event) => Promise<SlackAPI.SlackPost>;
@@ -39,11 +38,7 @@ const tableName = process.env.DYNAMO_TABLE_NAME;
 const ddb = new AWS.DynamoDB.DocumentClient();
 
 export default async function handleEvent({ event, ...restProps }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
-    const log = logger.child({ functionName: 'handleEvent' })
-    log.info('Responding to slack to get it to shut up')
-    // response to slack acknowledging the event was received
-    callback(null, DEFAULT_200_RESPONSE);
-
+    const log = logger.child({ functionName: 'handleEvent' });
     const { channel } = event;
 
     const [ , eventHandler ] = messageTypeToHandler.find(([ check ]) => check(event.text)) || []
