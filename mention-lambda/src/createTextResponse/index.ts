@@ -12,7 +12,7 @@ export function trimResponse(originalText: string, text: string): string {
     let responseLength = 0;
 
     while (responseLength < TARGET_RESPONSE_LENGTH && sentences.length > 0) {
-        const sentence = sentences.shift();
+        const sentence = sentences.shift().trim();
         responseLength += sentence.length;
         responseText.push(sentence);
     }
