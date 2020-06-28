@@ -8,13 +8,16 @@ const TARGET_RESPONSE_LENGTH = 150;
 export function trimResponse(originalText: string, text: string): string {
     const trimmedText = text.replace(originalText, '').trim();
     const sentences = trimmedText.split('.') // assume each period is a sentence
-    let responseText = '';
+    const responseText = [];
+    let responseLength = 0;
 
-    while (responseText.length < TARGET_RESPONSE_LENGTH && sentences.length > 0) {
-        responseText += sentences.shift();
+    while (responseLength < TARGET_RESPONSE_LENGTH && sentences.length > 0) {
+        const sentence = sentences.shift();
+        responseLength += sentence.length;
+        responseText.push(sentence);
     }
 
-    return responseText;
+    return responseText.join('. ');
 }
 
 export default async function createTextResponse(text: string): Promise<string> {

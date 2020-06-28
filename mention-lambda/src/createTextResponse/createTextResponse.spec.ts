@@ -30,7 +30,7 @@ describe('createTextResponse', () => {
                 id: 'abc'
             });
             const result = await createTextResponse(MOCK_USER_TEXT)
-            expect(result).toEqual("\"Oh yeah, a fight of this magnitude I have a fighter that was on the level, coming in under an hour, on an hour-long fight to defend his title This kid is doing a perfect job");
+            expect(result).toEqual("\"Oh yeah, a fight of this magnitude.  I have a fighter that was on the level, coming in under an hour, on an hour-long fight to defend his title.  This kid is doing a perfect job");
         })
     })
 })
