@@ -2,8 +2,9 @@ import fetchRedditMeme from './fetchRedditMeme'
 import fetchGoogleImagesMeme from './fetchGoogleImagesMeme'
 import { SlackAPI } from '../../../types/slackTypes';
 import logger from '../logger';
+import { ChatPostMessageArguments } from '@slack/web-api';
 
-export default async function fetchMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
+export default async function fetchMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<ChatPostMessageArguments> {
     const log = logger.child({ event, authedUsers });
     try {
         log.info('fetching via google images')

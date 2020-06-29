@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { ChatPostMessageArguments, MessageAttachment } from '@slack/web-api';
+
 import { SlackAPI } from '../../../../types/slackTypes';
 import { Google } from '../../../../types/googleTypes';
 import logger from '../../logger';
@@ -9,13 +11,12 @@ import selectMeme from './selectMeme';
 
 const { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } = process.env;
 
-const FEEDBACK_ATTACHMENT = {
-    "text": "Was this a :dank: meme?",
-    "fallback": "You are unable to give feedback on this meme",
-    "callback_id": MEME_FEEDBACK.callbackId,
-    "color": "#3AA3E3",
-    "attachment_type": "default",
-    "actions": [
+const FEEDBACK_ATTACHMENT: MessageAttachment = {
+    text: "Was this a :dank: meme?",
+    fallback: "You are unable to give feedback on this meme",
+    callback_id: MEME_FEEDBACK.callbackId,
+    color: "#3AA3E3",
+    actions: [
         {
             "name": "feedback",
             "text": ":partydank:",
@@ -44,7 +45,7 @@ async function fetchMemes(searchString: string): Promise<Google.SearchResultItem
     return res.data.items;
 }
 
-export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
+export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<ChatPostMessageArguments> {
     const log = logger.child({ event, authedUsers, function: 'fetchGoogleImagesMeme' });
     const sanitizedMessage = removeUsers(event.text)
 
@@ -77,6 +78,7 @@ export default async function fetchGoogleImagesMeme(event: SlackAPI.Event, authe
 
     return {
         text,
-        attachments
+        attachments,
+        channel: event.channel,
     };
 }

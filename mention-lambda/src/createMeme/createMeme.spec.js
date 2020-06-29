@@ -1,4 +1,5 @@
 jest.mock('axios');
+jest.mock('@slack/web-api');
 
 import axios from 'axios';
 import createMeme, { ERROR_MESSAGE } from './index';

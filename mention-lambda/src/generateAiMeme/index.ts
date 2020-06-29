@@ -1,3 +1,4 @@
+import { ChatPostMessageArguments } from '@slack/web-api';
 import { fetchAiText } from '../api/deepai';
 import memeTemplates from '../createMeme/memeTemplates.json';
 import { ImageFlip } from '../../../types/imageFlipTypes';
@@ -13,7 +14,7 @@ function getRandomIndex(length: number = 0) {
     return Math.floor(Math.random() * length);
 }
 
-export async function generateAiMeme({ text: fullText }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
+export async function generateAiMeme({ text: fullText, channel }: SlackAPI.Event): Promise<ChatPostMessageArguments> {
     const log = logger.child({ functionName: 'generateAiMeme' });
     const aiText = await fetchAiText(fullText);
 
@@ -42,9 +43,13 @@ export async function generateAiMeme({ text: fullText }: SlackAPI.Event): Promis
         return {
             text: successText,
             attachments,
+            channel
         };
     }
 
     log.info('Response from ImageFlip wasnt successful', { response });
-    return ERROR_MESSAGE;
+    return {
+        ...ERROR_MESSAGE,
+        channel,
+    };
 }

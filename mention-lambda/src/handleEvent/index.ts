@@ -1,4 +1,5 @@
 import { Callback } from 'aws-lambda';
+import { ChatPostMessageArguments } from '@slack/web-api';
 
 import { SlackAPI } from '../../../types/slackTypes';
 import fetchMeme from '../fetchMeme';
@@ -20,11 +21,11 @@ const isFetchMeme = (eventText = ''): boolean => eventText.toLowerCase().include
 const isCurseMessage = (eventText = ''): boolean => /(fuck|ass|bitch|shit|dick|bastard)/.test(eventText);
 
 // Response functions (that are one-liners)
-const generateCurseResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> thats very rude, why would you say that?` });
-const generateDefaultResponse = async (event: SlackAPI.Event): Promise<SlackAPI.SlackPost> => ({ text: `<@${event.user}> I tried to think of a response, but I'm too dumb.` });
+const generateCurseResponse = async (event: SlackAPI.Event): Promise<ChatPostMessageArguments> => ({ text: `<@${event.user}> thats very rude, why would you say that?`, channel: event.channel });
+const generateDefaultResponse = async (event: SlackAPI.Event): Promise<ChatPostMessageArguments> => ({ text: `<@${event.user}> I tried to think of a response, but I'm too dumb.`, channel: event.channel });
 
 type CheckFunction = (event: string) => boolean;
-type EventHandler = (event: SlackAPI.Event) => Promise<SlackAPI.SlackPost>;
+type EventHandler = (event: SlackAPI.Event) => Promise<ChatPostMessageArguments>;
 type EventHandlerTuple = [CheckFunction, EventHandler];
 
 const messageTypeToHandler: EventHandlerTuple[] = [
@@ -44,13 +45,13 @@ export default async function handleEvent({ event, ...restProps }: SlackAPI.Slac
 
     const [ , eventHandler ] = messageTypeToHandler.find(([ check ]) => check(event.text)) || []
 
-    let message;
+    let message: ChatPostMessageArguments;
 
     if (eventHandler) {
         message = await eventHandler(event);
     } else {
         try {
-            message = { text: await createTextResponse(event.text), attachments: [] };
+            message = { text: await createTextResponse(event.text), channel };
         } catch(e) {
             message = await generateDefaultResponse(event);
         }
@@ -63,5 +64,5 @@ export default async function handleEvent({ event, ...restProps }: SlackAPI.Slac
     }
 
     log.info('Sending slack message: ', { slackMessage: message });
-    sendSlackMessage(message, channel);
+    sendSlackMessage(message);
 };

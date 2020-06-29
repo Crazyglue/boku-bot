@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { ChatPostMessageArguments } from '@slack/web-api';
+
 import { SlackAPI } from '../../../../types/slackTypes';
 import { Reddit } from '../../../../types/redditTypes';
 import removeUsers from '../removeUsers';
@@ -19,7 +21,7 @@ function images(post: Reddit.RedditPost) {
     return imageExtensionRegex.test(post.data.url) && gifvExtensionRegex.test(post.data.url);
 }
 
-export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<SlackAPI.SlackPost> {
+export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers: string[] = []): Promise<ChatPostMessageArguments> {
     const sanitizedMessage = removeUsers(event.text)
 
     const { data: { children: posts = [] } } = await fetchMemes(sanitizedMessage);
@@ -28,7 +30,7 @@ export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers
 
     if (imagePosts.length === 0) {
         const text = `:ohno: Sorry <@${event.user}> couldn't find any memes :ohno:`;
-        return { text };
+        return { text, channel: event.channel };
     }
 
     const randomIndex = Math.floor(imagePosts.length * Math.random());
@@ -43,5 +45,6 @@ export default async function fetchRedditMeme(event: SlackAPI.Event, authedUsers
     return {
         text,
         attachments,
+        channel: event.channel,
     };
 };

@@ -1,3 +1,4 @@
+import { ChatPostMessageArguments } from '@slack/web-api';
 import FuzzySearch from 'fuzzy-search';
 
 import { postMemeToImageFlip } from '../api';
@@ -13,11 +14,14 @@ const searcher = new FuzzySearch<ImageFlip.ImageFlipMemeTemplate>(memeTable, ['n
 
 export const ERROR_MESSAGE = { text: ':ohno: Something went wrong :ohno:' };
 
-export default async function createMeme({ text = '' }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
+export default async function createMeme({ text = '', channel }: SlackAPI.Event): Promise<ChatPostMessageArguments> {
     const log = logger.child({ functionName: 'createMeme' })
     if (!text || text.length === 0) {
         log.info('No text, cannot create meme.')
-        return ERROR_MESSAGE;
+        return {
+            ...ERROR_MESSAGE,
+            channel
+        };
     }
 
     const [templateName, ...textValues] = parseInputText(text);
@@ -26,7 +30,8 @@ export default async function createMeme({ text = '' }: SlackAPI.Event): Promise
 
     if (!template) {
         return {
-            text: `Sorry, couldnt find a meme template for: ${text}`
+            text: `Sorry, couldnt find a meme template for: ${text}`,
+            channel
         }
     }
 
@@ -41,9 +46,13 @@ export default async function createMeme({ text = '' }: SlackAPI.Event): Promise
         return {
             text: successText,
             attachments,
+            channel
         };
     }
 
     log.info('Response from ImageFlip wasnt successful', { response });
-    return ERROR_MESSAGE;
+    return {
+        ...ERROR_MESSAGE,
+        channel
+    };
 };

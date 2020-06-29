@@ -2,8 +2,10 @@ import generateHelpResponse from './generateHelpResponse';
 
 describe('generateHelpResponse', () => {
     it('creates a propertly formatted slack message', async () => {
-        const result = await generateHelpResponse({ user: 'HulkHogan' })
+        const result = await generateHelpResponse({ user: 'HulkHogan', channel: 'ds-devops' })
         expect(result).toEqual({
+            text: '',
+            channel: 'ds-devops',
             blocks: [
                 {
                     type: 'section',

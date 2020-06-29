@@ -1,6 +1,7 @@
+import { ChatPostMessageArguments } from '@slack/web-api';
 import { SlackAPI } from '../../../types/slackTypes';
 
-export default async function generateHelpResponse({ user }: SlackAPI.Event): Promise<SlackAPI.SlackPost> {
+export default async function generateHelpResponse({ user, channel }: SlackAPI.Event): Promise<ChatPostMessageArguments> {
     const responseText = `<@${user}> You can interact with me in a number of ways:`;
     const blockText = [
         responseText,
@@ -19,6 +20,8 @@ export default async function generateHelpResponse({ user }: SlackAPI.Event): Pr
     ];
 
     return {
+        text: '',
+        channel,
         blocks,
     };
 };
