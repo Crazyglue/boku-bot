@@ -8,6 +8,7 @@ export declare module SlackAPI {
     export interface Edited {
         user: string;
         ts: string;
+        type: string;
     }
 
     export interface Element {
@@ -63,7 +64,7 @@ export declare module SlackAPI {
     export interface SlackPost {
         attachments?: SlackPostAttachment[];
         blocks?: Block[];
-        text?: string;
+        text: string;
     }
 
     export interface SlackPostAttachment {
@@ -109,10 +110,10 @@ export declare module SlackAPI {
     export interface Action {
         id?: string;
         name: string;
-        text?: string;
-        type: string;
+        text: string;
+        type: "button"|"select";
         value: string;
-        style?: string;
+        style?: "danger"|"default"|"primary";
     }
 
     export interface Attachment {

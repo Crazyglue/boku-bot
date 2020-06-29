@@ -1,8 +1,10 @@
-import axios from 'axios';
+import { WebClient } from '@slack/web-api';
 
 import { SlackAPI } from '../../../types/slackTypes';
 
 const { SLACK_ACCESS_TOKEN } = process.env;
+
+const client = new WebClient(SLACK_ACCESS_TOKEN)
 
 // Post message to Slack - https://api.slack.com/methods/chat.postMessage
 export default function sendSlackMessage(message: SlackAPI.SlackPost, channel: string = '') {
@@ -15,13 +17,5 @@ export default function sendSlackMessage(message: SlackAPI.SlackPost, channel: s
         ...message,
     };
 
-    axios({
-        url: 'https://slack.com/api/chat.postMessage',
-        method: 'post',
-        headers: {
-            Authorization: `Bearer ${SLACK_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json',
-        },
-        data: JSON.stringify(messageParams),
-    });
+    client.chat.postMessage(messageParams);
 };

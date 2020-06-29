@@ -1,15 +1,15 @@
 import { Callback } from 'aws-lambda';
-import * as AWS from 'aws-sdk';
 
 import { SlackAPI } from '../../../types/slackTypes';
 import fetchMeme from '../fetchMeme';
 import createMeme from '../createMeme';
-import sendSlackMessage from '../sendSlackMessage';
+import sendSlackMessage from '../api/slack';
 import generateHelpResponse from '../commands/generateHelpResponse';
 import generateMemeTemplatesResponse from '../commands/generateMemeTemplatesResponse';
 import logger from '../logger';
 import createTextResponse from '../createTextResponse';
 import { generateAiMeme } from '../generateAiMeme';
+import { putItem } from '../api/dynamo';
 
 // Check functions
 const isCreateMeme = (eventText = ''): boolean => eventText.includes('!create');
@@ -38,8 +38,6 @@ const messageTypeToHandler: EventHandlerTuple[] = [
 
 const tableName = process.env.DYNAMO_TABLE_NAME;
 
-const ddb = new AWS.DynamoDB.DocumentClient();
-
 export default async function handleEvent({ event, ...restProps }: SlackAPI.SlackEventPayload, callback: Callback): Promise<void> {
     const log = logger.child({ functionName: 'handleEvent' });
     const { channel } = event;
@@ -59,17 +57,7 @@ export default async function handleEvent({ event, ...restProps }: SlackAPI.Slac
     }
 
     try {
-        await ddb.put({
-            TableName: tableName,
-            Item: {
-                SlackMessageId: restProps.event_id,
-                Text: event.text,
-                Channel: event.channel,
-                User: event.user,
-                ReponseText: message.text,
-                ResponseAttachments: JSON.stringify(message.attachments)
-            }
-        }).promise()
+        await putItem(tableName, event, message);
     } catch (e) {
         log.info('Cannot save transaction', { error: e });
     }
