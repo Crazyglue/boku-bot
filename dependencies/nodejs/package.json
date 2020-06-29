@@ -1,5 +1,6 @@
 {
     "dependencies": {
+        "@slack/web-api": "^5.10.0",
         "axios": "^0.19.2",
         "deepai": "^1.0.15",
         "dotenv": "^8.2.0",
