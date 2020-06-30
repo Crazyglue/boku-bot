@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk';
+import { Button } from '@slack/web-api';
 
 import { SlackAPI } from '../../../types/slackTypes';
 import logger from '../logger';
@@ -10,18 +11,22 @@ const tableName = process.env.BOKU_MEME_FEEDBACK_TABLE;
 
 const linkRegex = /\<(.+)\>/g;
 
-const ORIGINAL_ACTION_ATTACHMENTS = [
+const ORIGINAL_ACTION_ATTACHMENTS: Button[] = [
     {
-        "name": "feedback",
-        "text": ":partydank:",
-        "type": "button",
-        "value": MEME_FEEDBACK.positiveResponse
+        text: {
+            type: 'plain_text',
+            text: ":partydank:"
+        },
+        type: "button",
+        value: MEME_FEEDBACK.positiveResponse
     },
     {
-        "name": "feedback",
-        "text": ":poopmove:",
-        "type": "button",
-        "value": MEME_FEEDBACK.negativeResponse
+        text: {
+            type: 'plain_text',
+            text: ":poopmove:"
+        },
+        type: "button",
+        value: MEME_FEEDBACK.negativeResponse
     }
 ]
 
@@ -94,10 +99,10 @@ export default async function handleMemeFeedback(event: SlackAPI.ActionEvent): P
 
     log.info('Going to respond with current tallies', { sumOfGood, sumOfBad, allFeedback });
 
-    ORIGINAL_ACTION_ATTACHMENTS[0].text = `${sumOfGood} x :partydank:`;
-    ORIGINAL_ACTION_ATTACHMENTS[1].text = `${sumOfBad} x :poopmove:`;
+    ORIGINAL_ACTION_ATTACHMENTS[0].text.text = `${sumOfGood} x :partydank:`;
+    ORIGINAL_ACTION_ATTACHMENTS[1].text.text = `${sumOfBad} x :poopmove:`;
 
-    message.attachments[1].actions = ORIGINAL_ACTION_ATTACHMENTS;
+    message.attachments[1].actions = (ORIGINAL_ACTION_ATTACHMENTS as any);
 
     log.info('Executing callback', { callbackMessage: message });
 
