@@ -29,6 +29,8 @@ export async function postMemeToImageFlip(template: ImageFlip.ImageFlipMemeTempl
 
     const imageFlipParams = createImageFlipPayload(template, textSnippets);
 
+    log.info('Creating ImageFlip meme', { imageFlipParams });
+
     const response = await axios.request<ImageFlip.ImageFlipResponse>({
         url: 'https://api.imgflip.com/caption_image',
         method: 'post',

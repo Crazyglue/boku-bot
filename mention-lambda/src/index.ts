@@ -41,8 +41,6 @@ exports.handler = (data: APIGatewayProxyEvent, context: Context, callback: Callb
 
     const handleFn = eventToHandler[parsedData.type];
 
-    log.info({ handleFn });
-
     if (handleFn) {
         handleFn(parsedData, callback);
     } else {

@@ -8,21 +8,48 @@ import { SlackAPI } from '../../../types/slackTypes';
 
 const TOP_TEXT_WORD_COUNT = 5;
 const OTHER_TEXT_WORD_COUNT = 10;
+const MINIMUM_WORD_COUNT = 3;
+const MAXIMUM_TOTAL_SENTENCE_LENGTH = 50;
 const ERROR_MESSAGE = { text: ':ohno: I\'m too dumb and couldn\'t make a meme for you :ohno:' };
 
 function getRandomIndex(length: number = 0) {
     return Math.floor(Math.random() * length);
 }
 
+const TOP_TEXT_FILTERS = [
+    (sentence: string) => sentence.split(' ').length <= TOP_TEXT_WORD_COUNT,
+    (sentence: string) => sentence.split(' ').length >= MINIMUM_WORD_COUNT,
+    (sentence: string) => sentence.length <= MAXIMUM_TOTAL_SENTENCE_LENGTH,
+]
+
+const OTHER_TEXT_FILTERS = [
+    (sentence: string) => sentence.split(' ').length <= OTHER_TEXT_WORD_COUNT,
+    (sentence: string) => sentence.split(' ').length >= MINIMUM_WORD_COUNT,
+    (sentence: string, topText: string[]) => !topText.includes(sentence),
+    (sentence: string) => sentence.length <= MAXIMUM_TOTAL_SENTENCE_LENGTH,
+]
+
 export async function generateAiMeme({ text: fullText, channel }: SlackAPI.Event): Promise<ChatPostMessageArguments> {
     const log = logger.child({ functionName: 'generateAiMeme' });
-    const aiText = await fetchAiText(fullText);
+    const aiText = await fetchAiText(fullText.replace(/<@.+>/g, ''));
+
+    // Clean up string and get sentences
+    const sentences = aiText
+        .replace(fullText, '') // remove the text that initiated the request
+        .replace(/\<.*?\>/g, '') // remove all tags
+        .replace(/\<\|endoftext\|\>/g, ' ') // remove NN stuff
+        .split(/[\.\?\!\n]\s/) // split into setences
+        .map(sentence => sentence.trim()).filter(Boolean); // trim and remove empty strings
+
+    log.info('Filtered down the sentences', { sentences });
 
     const randomTemplate: ImageFlip.ImageFlipMemeTemplate = memeTemplates[getRandomIndex(memeTemplates.length)];
 
-    const topTextCandidates = aiText.split('.').filter(t => t.split(' ').length <= TOP_TEXT_WORD_COUNT);
-    const otherTextCandidates = aiText.split('.').filter(t => t.split(' ').length <= OTHER_TEXT_WORD_COUNT);
+    // Find candidates for each text field
+    const topTextCandidates = TOP_TEXT_FILTERS.reduce((remainingSentences, filterFn) => remainingSentences.filter(filterFn), sentences)
+    const otherTextCandidates = OTHER_TEXT_FILTERS.reduce((remaining, filterFn) => remaining.filter((r) => filterFn(r, topTextCandidates)), sentences);
 
+    log.info('Found the following candidates', { topTextCandidates, otherTextCandidates });
 
     const topText = topTextCandidates[getRandomIndex(topTextCandidates.length)]
     const otherText: string[] = [];
@@ -35,14 +62,11 @@ export async function generateAiMeme({ text: fullText, channel }: SlackAPI.Event
 
     if (response.success) {
         log.info('Successfully created a meme!', { response })
-        const successText = `I created this :partydank: meme`;
-        const attachments = [
-            { title: '', image_url: response.data.url },
-        ];
-
         return {
-            text: successText,
-            attachments,
+            text: `I created this :partydank: meme`,
+            attachments: [
+                { title: '', image_url: response.data.url },
+            ],
             channel
         };
     }
