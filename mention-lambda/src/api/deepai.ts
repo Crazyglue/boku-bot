@@ -2,7 +2,7 @@ import deepai from 'deepai';
 
 import logger from '../logger';
 
-export async function fetchAiText(text: string): Promise<string> {
+export async function fetchAiText(text: string): Promise<DeepAIResponse> {
     const log = logger.child({ functionName: 'createTextResponse' });
 
     log.info('Hitting DeepAI with', { inputText: text });
@@ -12,5 +12,5 @@ export async function fetchAiText(text: string): Promise<string> {
 
     log.info('Got response', { response })
 
-    return response.output;
+    return response;
 }

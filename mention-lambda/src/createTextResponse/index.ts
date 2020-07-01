@@ -26,7 +26,11 @@ export default async function createTextResponse(text: string): Promise<string> 
 
     // Strip out user names
     const strippedText = text.replace(/\<@.+\>/g, '').trim()
-    const responseText = await fetchAiText(strippedText);
+    const { output: responseText, ...deepAiResponse } = await fetchAiText(strippedText);
+
+    if (deepAiResponse.err) {
+        return ':ohno: Sorry I\'m too dumb to respond :ohno:';
+    }
 
     const trimmedText = trimResponse(strippedText, responseText);
 

@@ -32,7 +32,18 @@ const OTHER_TEXT_FILTERS = [
 export async function generateAiMeme({ text: fullText, channel }: SlackAPI.Event): Promise<ChatPostMessageArguments> {
     const log = logger.child({ functionName: 'generateAiMeme' });
     const requestText = fullText.replace(/<@.+>/g, '');  // remove boku user
-    const aiText = await fetchAiText(requestText);
+    const { output: aiText, ...deepAiResponse } = await fetchAiText(requestText);
+
+    if (deepAiResponse.err) {
+        log.info('Error fetching text from DeepAI', { ...deepAiResponse, aiText })
+        return {
+            ...ERROR_MESSAGE,
+            attachments: [
+                { text: deepAiResponse.err }
+            ],
+            channel
+        }
+    }
 
     // Clean up string and get sentences
     const sentences = aiText

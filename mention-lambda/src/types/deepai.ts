@@ -1,6 +1,7 @@
 interface DeepAIResponse {
     output: string;
     id: string;
+    err?: string;
 }
 
 declare module 'deepai' {
