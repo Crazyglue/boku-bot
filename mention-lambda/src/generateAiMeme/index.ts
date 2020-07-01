@@ -31,11 +31,12 @@ const OTHER_TEXT_FILTERS = [
 
 export async function generateAiMeme({ text: fullText, channel }: SlackAPI.Event): Promise<ChatPostMessageArguments> {
     const log = logger.child({ functionName: 'generateAiMeme' });
-    const aiText = await fetchAiText(fullText.replace(/<@.+>/g, ''));
+    const requestText = fullText.replace(/<@.+>/g, '');  // remove boku user
+    const aiText = await fetchAiText(requestText);
 
     // Clean up string and get sentences
     const sentences = aiText
-        .replace(fullText, '') // remove the text that initiated the request
+        .replace(requestText, '') // remove the text that initiated the request
         .replace(/\<.*?\>/g, '') // remove all tags
         .replace(/\<\|endoftext\|\>/g, ' ') // remove NN stuff
         .split(/[\.\?\!\n]\s/) // split into setences
