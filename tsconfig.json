@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "allowJs": true,
+      "noImplicitAny": true,
+      "resolveJsonModule": true,
+      "moduleResolution": "node",
+      "lib": ["es2018", "es2017.object"],
+      "module": "commonjs",
+      "target": "es2018",
+      "baseUrl": ".",
+      "typeRoots": ["node_modules/@types", "src/types", "deepai.d.ts"],
+      "outDir": "./built"
+    },
+    "include": ["./src/**/*", "deepai.d.ts"],
+    "exclude": ["node_modules", "**/*.spec.js"]
+  }

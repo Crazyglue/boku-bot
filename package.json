@@ -4,11 +4,13 @@
   "description": "To deploy `boku-bot`, run the following commands.",
   "main": "index.js",
   "scripts": {
+    "build": "./node_modules/.bin/tsc",
     "build:ts": "./node_modules/.bin/concurrently -n \"action,mention\" -c \"green,magenta\" \"cd action-lambda && ./node_modules/.bin/tsc\" \"cd mention-lambda && ./node_modules/.bin/tsc\"",
     "build:ts:watch": "tsc -w",
     "deploy": "npm test && npm run build:ts && npm run sam:build && npm run sam:deploy",
     "sam:build": "sam package --template-file template.yaml --s3-bucket $(grep BOKU_BOT_S3_BUCKET .env | cut -d '=' -f2) --output-template-file out.yaml",
     "sam:deploy": "sam deploy --template-file ./out.yaml --stack-name BokuBotStack --capabilities CAPABILITY_IAM --region $(grep AWS_REGION .env | cut -d '=' -f2)",
+    "start": "node ./built/index.js",
     "test": "./node_modules/.bin/concurrently -n \"action,mention\" -c \"green,magenta\" \"cd action-lambda && NODE_ENV=test npm run test\" \"cd mention-lambda && NODE_ENV=test npm run test\""
   },
   "repository": {
@@ -24,7 +26,24 @@
   "homepage": "https://github.com/Crazyglue/boku-bot#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.53",
-    "concurrently": "^5.1.0"
+    "@types/aws-sdk": "^2.7.0",
+    "@types/axios": "^0.14.0",
+    "@types/fuzzy-search": "^2.1.2",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.23",
+    "concurrently": "^5.1.0",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0",
+    "tsc": "^2.0.4",
+    "typescript": "^4.6.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@slack/bolt": "^3.11.0",
+    "aws-sdk": "^2.1107.0",
+    "axios": "^0.26.1",
+    "deepai": "^1.0.21",
+    "dotenv": "^16.0.0",
+    "fuzzy-search": "^3.2.1",
+    "winston": "^3.7.2"
+  }
 }
